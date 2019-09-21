@@ -1,61 +1,61 @@
 {
-    "Database": {
-    	"Dialect": "SqlServer",
-        "Relationships": [
+    "database": {
+        "relationships": [
             {
-                "SecondaryTable": "",
-                "PrimaryTable": ""
+                "secondary_table_name": "",
+                "primary_table_name": ""
             }
         ],
-        "Queries": [],
-        "Tables": [
+        "dialect": "SqlServer",
+        "queries": [],
+        "tables": [
             {
-                "Columns": [
+                "columns": [
                     {
-                        "Type": "Integer",
-                        "Names": [
+                        "column_type": "Integer",
+                        "names": [
                             "AddressId"
                         ],
-                        "Nullable": false,
-                        "AutoIncrement": true
+                        "nullable": false,
+                        "auto_increment": true
                     },
                     {
-                        "Type": "String",
-                        "Names": [
+                        "column_type": "String",
+                        "names": [
                             "AddressLine3",
                             "AddressLine2"
                         ],
-                        "Nullable": true
+                        "nullable": true
                     },
                     {
-                        "Type": "String",
-                        "Names": [
+                        "column_type": "String",
+                        "names": [
                             "AddressLine1",
                             "City",
                             "State",
                             "ZipCode",
                             "AddressKey"
                         ],
-                        "Nullable": false
+                        "nullable": false
                     },
                     {
-                        "Type": "Binary",
-                        "Names": [
+                        "column_type": "Binary",
+                        "names": [
                             "AddressKey"
                         ],
-                        "Nullable": false
+                        "nullable": false
                     }
                 ],
-                "AuditFields": true,
-                "Constraints": [
+                "audit_fields": true,
+                "constraints": [
                     {
-                        "Type": "PrimaryKey",
-                        "ColumnNames": [
+                        "constraint_type": "PrimaryKey",
+                        "column_names": [
                             "AddressId"
                         ]
                     }
                 ],
-                "TableName": "Addresses"
+                "table_name": "Addresses"
             }
         ]
     }
