@@ -1,5 +1,6 @@
 {
     "database": {
+        "database_name": "AddressValidation",
         "relationships": [
             {
                 "secondary_table_name": "",
@@ -34,7 +35,6 @@
                             "City",
                             "State",
                             "ZipCode",
-                            "AddressKey"
                         ],
                         "nullable": false
                     },
