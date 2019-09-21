@@ -1,0 +1,62 @@
+{
+    "Database": {
+    	"Dialect": "SqlServer",
+        "Relationships": [
+            {
+                "SecondaryTable": "",
+                "PrimaryTable": ""
+            }
+        ],
+        "Queries": [],
+        "Tables": [
+            {
+                "Columns": [
+                    {
+                        "Type": "Integer",
+                        "Names": [
+                            "AddressId"
+                        ],
+                        "Nullable": false,
+                        "AutoIncrement": true
+                    },
+                    {
+                        "Type": "String",
+                        "Names": [
+                            "AddressLine3",
+                            "AddressLine2"
+                        ],
+                        "Nullable": true
+                    },
+                    {
+                        "Type": "String",
+                        "Names": [
+                            "AddressLine1",
+                            "City",
+                            "State",
+                            "ZipCode",
+                            "AddressKey"
+                        ],
+                        "Nullable": false
+                    },
+                    {
+                        "Type": "Binary",
+                        "Names": [
+                            "AddressKey"
+                        ],
+                        "Nullable": false
+                    }
+                ],
+                "AuditFields": true,
+                "Constraints": [
+                    {
+                        "Type": "PrimaryKey",
+                        "ColumnNames": [
+                            "AddressId"
+                        ]
+                    }
+                ],
+                "TableName": "Addresses"
+            }
+        ]
+    }
+}
