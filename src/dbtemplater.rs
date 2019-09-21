@@ -15,6 +15,9 @@ impl Templater {
         let tera = compile_templates!("templates/**/*");
         let serialized_db = &schema.database;
         let rendered = tera.render(template_context.as_str(), serialized_db);
-        rendered.unwrap()
+        match rendered {
+            Ok(val) => val,
+            Err(err) => panic!(err),
+        }
     }
 }

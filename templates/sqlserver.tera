@@ -13,15 +13,24 @@ CREATE TABLE [dbo].[{{table.table_name}}] (
         {% for name in column.names %}
             {% if not is_beginning %}, {% else %}{% endif %}
             [{{name}}]
+            
+            {% if column.column_type == "String" %} NVARCHAR(MAX) {% endif %}
+            {% if column.column_type == "Integer" %} BIGINT {% endif %}
+            {% if column.column_type == "Binary" %} VARBINARY(MAX) {% endif %}
 
-            {% if column.column_type == "String" %}NVARCHAR(MAX){% endif %}
-            {% if column.column_type == "Integer" %}BIGINT{% endif %}
-            {% if column.column_type == "Binary" %}VARBINARY(MAX){% endif %}
-
-            {% if column.nullable %}NULL{% else %}NOT NULL{% endif %}
+            {% if column.nullable %} NULL {% else %} NOT NULL {% endif %}
             {% set_global is_beginning = false %}
         {% endfor %}
     {% endfor %}
 );
 GO
 {% endfor %}
+
+
+
+
+
+
+
+
+
