@@ -11,5 +11,5 @@ fn main() {
         .expect("Something went wrong reading the file");
     let deserialized: DbSchema = serde_json::from_str(&contents).unwrap();
 
-    println!("deserialized = {:?}", deserialized);
+    dbg!(deserialized);
 }
