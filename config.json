@@ -3,8 +3,8 @@
         "database_name": "AddressValidation",
         "relationships": [
             {
-                "secondary_table_name": "",
-                "primary_table_name": ""
+                "relationship_name": "CustomerAddressJobStatusTag",
+                "table_names": [ "Customer", "Address", "Job", "StatusTag" ]
             }
         ],
         "dialect": "SqlServer",
@@ -34,7 +34,7 @@
                             "AddressLine1",
                             "City",
                             "State",
-                            "ZipCode",
+                            "ZipCode"
                         ],
                         "nullable": false
                     },

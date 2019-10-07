@@ -4,6 +4,10 @@ extern crate tera;
 #[macro_use]
 extern crate serde_json;
 */
+// extern crate futures;
+// extern crate futures_state_stream;
+// extern crate tokio;
+extern crate tiberius;
 
 use std::fs;
 use std::fs::File;
@@ -21,10 +25,18 @@ fn main() -> Result<(), Error> {
     let filename = "./config.json";
     let contents = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
+    println!("Read config");
+
     let deserialized: DbSchema = serde_json::from_str(&contents).unwrap();
     // dbg!(&deserialized);
-    let template = Templater{}.template(deserialized);
+    println!("Got database schema");
+
+    let template = Templater::init().template(deserialized);
     // dbg!(&template);
+    println!("Generated template");
+
     let mut output = File::create("./sql-result.sql")?;
+    println!("Wrote result");
+    println!("--- Done ---");
     write!(output, "{}", template)
 }
