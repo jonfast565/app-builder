@@ -1,10 +1,10 @@
 {
     "database": {
-        "database_name": "AddressValidation",
+        "database_name": "LoginDb",
         "relationships": [
             {
-                "relationship_name": "CustomerAddressJobStatusTag",
-                "table_names": [ "Customer", "Address", "Job", "StatusTag" ]
+                "relationship_name": "UserSession",
+                "table_names": [ "User", "Session" ]
             }
         ],
         "dialect": "SqlServer",
@@ -15,7 +15,7 @@
                     {
                         "column_type": "Integer",
                         "names": [
-                            "AddressId"
+                            "UserId"
                         ],
                         "nullable": false,
                         "auto_increment": true
@@ -23,8 +23,8 @@
                     {
                         "column_type": "String",
                         "names": [
-                            "AddressLine3",
-                            "AddressLine2"
+                        	"AddressLine2",
+                            "AddressLine3"
                         ],
                         "nullable": true
                     },
@@ -37,13 +37,6 @@
                             "ZipCode"
                         ],
                         "nullable": false
-                    },
-                    {
-                        "column_type": "Binary",
-                        "names": [
-                            "AddressKey"
-                        ],
-                        "nullable": false
                     }
                 ],
                 "audit_fields": true,
@@ -51,11 +44,42 @@
                     {
                         "constraint_type": "PrimaryKey",
                         "column_names": [
-                            "AddressId"
+                            "UserId"
                         ]
                     }
                 ],
-                "table_name": "Addresses"
+                "table_name": "User"
+            },
+            {
+                "columns": [
+                    {
+                        "column_type": "Integer",
+                        "names": [
+                            "SessionId"
+                        ],
+                        "nullable": false,
+                        "auto_increment": true
+                    },
+                    {
+                        "column_type": "Date",
+                        "names": [
+                            "BeginDate",
+                            "EndDate",
+                            "LastActiveDate"
+                        ],
+                        "nullable": true
+                    }
+                ],
+                "audit_fields": true,
+                "constraints": [
+                    {
+                        "constraint_type": "PrimaryKey",
+                        "column_names": [
+                            "SessionId"
+                        ]
+                    }
+                ],
+                "table_name": "Session"
             }
         ]
     }
