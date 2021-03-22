@@ -3,8 +3,8 @@
         "database_name": "LoginDb",
         "relationships": [
             {
-                "relationship_name": "UserSession",
-                "table_names": [ "User", "Session" ]
+                "primary_table_name": "User",
+                "secondary_table_name": "Session"
             }
         ],
         "dialect": "SqlServer",

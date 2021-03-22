@@ -87,10 +87,12 @@ pub struct IndexDefinition {
 }
 
 impl DbSchema {
+	/*
     fn get_structure_from_db(conn_str: String) -> DbSchema {
         let connection_future = tiberius::SqlConnection::connect(conn_str.as_str());
         connection_future.and_then(| conn | conn);
 
         current_thread::block_on_all(connection_future).unwrap();
     }
+    */
 }

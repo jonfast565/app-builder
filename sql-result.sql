@@ -1,22 +1,136 @@
 /*
- * Database Name: AddressValidation
+ * Database Name: LoginDb
  * Dialect: SqlServer
  */
-CREATE DATABASE AddressValidation;
+
+CREATE DATABASE LoginDb;
 GO
-  CREATE TABLE [dbo].[Addresses] (
-    [AddressId] BIGINT IDENTITY(1, 1) NOT NULL,
-    [AddressLine3] NVARCHAR(MAX) NULL,
-    [AddressLine2] NVARCHAR(MAX) NULL,
-    [AddressLine1] NVARCHAR(MAX) NOT NULL,
-    [City] NVARCHAR(MAX) NOT NULL,
-    [State] NVARCHAR(MAX) NOT NULL,
-    [ZipCode] NVARCHAR(MAX) NOT NULL,
-    [AddressKey] VARBINARY(MAX) NOT NULL
-  );
+
+
+CREATE TABLE [dbo].[User] (
+    
+    
+        
+            
+            [UserId]
+            
+             BIGINT  IDENTITY(1, 1)  
+            
+             NOT NULL 
+            
+        
+    
+        
+            , 
+            [AddressLine2]
+             NVARCHAR(MAX) 
+            
+            
+             NULL 
+            
+        
+            , 
+            [AddressLine3]
+             NVARCHAR(MAX) 
+            
+            
+             NULL 
+            
+        
+    
+        
+            , 
+            [AddressLine1]
+             NVARCHAR(MAX) 
+            
+            
+             NOT NULL 
+            
+        
+            , 
+            [City]
+             NVARCHAR(MAX) 
+            
+            
+             NOT NULL 
+            
+        
+            , 
+            [State]
+             NVARCHAR(MAX) 
+            
+            
+             NOT NULL 
+            
+        
+            , 
+            [ZipCode]
+             NVARCHAR(MAX) 
+            
+            
+             NOT NULL 
+            
+        
+    
+);
 GO
-ALTER TABLE
-  Addresses
-ADD
-  CONSTRAINT PK_Addresses PRIMARY KEY ([AddressId]);
+
+CREATE TABLE [dbo].[Session] (
+    
+    
+        
+            
+            [SessionId]
+            
+             BIGINT  IDENTITY(1, 1)  
+            
+             NOT NULL 
+            
+        
+    
+        
+            , 
+            [BeginDate]
+            
+            
+            
+             NULL 
+            
+        
+            , 
+            [EndDate]
+            
+            
+            
+             NULL 
+            
+        
+            , 
+            [LastActiveDate]
+            
+            
+            
+             NULL 
+            
+        
+    
+);
 GO
+
+
+    
+        
+        ALTER TABLE User ADD CONSTRAINT PK_User 
+            PRIMARY KEY ( [UserId] );
+        
+    
+GO    
+
+    
+        
+        ALTER TABLE Session ADD CONSTRAINT PK_Session 
+            PRIMARY KEY ( [SessionId] );
+        
+    
+GO    
+
