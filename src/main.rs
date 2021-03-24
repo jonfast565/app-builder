@@ -1,6 +1,6 @@
 use std::fs;
-use std::fs::File;
-use std::io::{Error, Write};
+use std::io::{Error};
+use crate::appbuilder::AppBuilder;
 
 mod dbbuilder;
 mod utilities;
@@ -12,6 +12,8 @@ fn main() -> Result<(), Error> {
     let filename = "./config.json";
     println!("Reading config...");
     let contents = fs::read_to_string(filename)?;
+    let app_builder = AppBuilder::init(contents);
+    app_builder.template();
 
     println!("Done!");
     Ok(())

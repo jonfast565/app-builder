@@ -52,14 +52,14 @@ impl AppBuilder {
             template_context_str,
             &Context::from_serialize(&serialized_db).unwrap(),
         );
-        match rendered {
+        
+        let get_rendered = match rendered {
             Ok(val) => val,
             Err(err) => panic!(err.to_string()),
-        }
+        };
 
-        
         println!("Writing file...");
         let mut output = File::create("./sql-result.sql").unwrap();
-        write!(output, "{}", rendered.unwrap());
+        write!(output, "{}", get_rendered).unwrap();
     }
 }
