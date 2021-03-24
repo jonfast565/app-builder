@@ -2,7 +2,7 @@ use crate::dbbuilder::{DbSchema, Dialect};
 use tera::{Tera, Context};
 
 pub fn template(schema: DbSchema) -> String {
-    let tera = match Tera::new("./templates/**/*") {
+    let tera = match Tera::new("templates/**/*") {
         Ok(t) => t,
         Err(e) => {
             panic!("Parsing error(s): {}", e);

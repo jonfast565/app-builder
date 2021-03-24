@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'app-builder'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=app-builder",
+                    "--package=app-builder"
+                ],
+                "filter": {
+                    "name": "app-builder",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "program": "${workspaceFolder}/target/debug/app-builder",
+            "cwd": "${workspaceFolder}/target/debug/",
+            "sourceLanguages": [
+                "rust"
+            ]
+        }
+    ]
+}

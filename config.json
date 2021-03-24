@@ -4,7 +4,8 @@
         "relationships": [
             {
                 "primary_table_name": "User",
-                "secondary_table_name": "Session"
+                "secondary_table_name": "Session",
+                "relationship_type": "ManyToMany"
             }
         ],
         "dialect": "SqlServer",

@@ -18,12 +18,21 @@ pub enum ColumnType {
     IntegerType,
     StringType,
     BinaryType,
+    DateType
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum RelationshipType {
+    OneToOne,
+    OneToMany,
+    ManyToMany
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Relationship {
     pub primary_table_name: String,
     pub secondary_table_name: String,
+    pub relationship_type: RelationshipType
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
