@@ -86,6 +86,12 @@ pub struct Table {
     pub constraints: Vec<Constraint>,
 }
 
+impl Table {
+    pub fn lowercase_name(&mut self) {
+        self.table_name = self.table_name.to_lowercase();
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Database {
     pub database_name: String,
@@ -121,4 +127,9 @@ impl DbSchema {
         current_thread::block_on_all(connection_future).unwrap();
     }
     */
+    pub fn lowercase_ids(&mut self) {
+        for table in &mut self.database.tables {
+            table.lowercase_name();
+        }
+    }
 }
