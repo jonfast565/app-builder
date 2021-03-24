@@ -17,11 +17,9 @@ fn main() -> Result<(), Error> {
     println!("Read config");
 
     let deserialized: DbSchema = serde_json::from_str(&contents).unwrap();
-    // dbg!(&deserialized);
     println!("Got database schema");
 
     let template = template(deserialized);
-    // dbg!(&template);
     println!("Generated template");
 
     let mut output = File::create("./sql-result.sql")?;
