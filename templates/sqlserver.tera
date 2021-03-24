@@ -1,13 +1,13 @@
 /*
- * Database Name: {{ database_name }}
- * Dialect: {{ dialect }}
+ * Database Name: {{- database_name -}}
+ * Dialect: {{- dialect -}}
  */
 
-CREATE DATABASE {{ database_name }};
+CREATE DATABASE {{- database_name -}};
 GO
 
 {% for table in tables %}
-CREATE TABLE [dbo].[{{ table.table_name }}] (
+CREATE TABLE [dbo].[{{- table.table_name -}}] (
     {% set_global is_beginning = true %}
     {% for column in table.columns %}
         {% for name in column.names %}
