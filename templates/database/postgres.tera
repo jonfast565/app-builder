@@ -1,0 +1,56 @@
+/*
+ * Database Name: {{database_name}}
+ * Dialect: {{dialect}}
+ */
+
+-- create database
+CREATE DATABASE {{database_name}};
+
+-- create tables
+{% for table in tables %}
+CREATE TABLE {{ table.table_name }} (
+    {%- for column in table.columns -%}
+        {%- for name in column.names %}
+            {{ name }}
+            {% if column.column_type == "String" %} character varying(255) {% endif %}
+            {% if column.column_type == "Integer" %}{% if column.auto_increment %} BIGSERIAL {% else %} BIGINT {% endif %} {% endif %}
+            {% if column.column_type == "Binary" %} character varying(255) {% endif %}
+            {% if column.column_type == "Date" %} timestamp with time zone {% endif %}
+            {% if column.nullable %} NULL {% else %} NOT NULL {% endif %}
+            {% if loop.last %}{% else %},{% endif %}
+        {% endfor -%}
+        {% if loop.last %}{% else %},{% endif %}
+    {%- endfor -%}
+    {% if table.audit_fields %}
+            ,
+            created_date_time timestamp with time zone NOT NULL DEFAULT NOW(),
+            created_by character varying(MAX) NOT NULL DEFAULT current_user,
+            updated_date_time timestamp with time zone NOT NULL DEFAULT NOW(),
+            updated_by character varying(MAX) NOT NULL DEFAULT current_user
+    {% endif %}
+);
+{% endfor %}
+
+-- add constraints
+{%- for table in tables -%}
+    {%- for constraint in table.constraints %}
+        {% if constraint.constraint_type == "PrimaryKey" %}
+        ALTER TABLE {{ table.table_name }} ADD CONSTRAINT pk_{{ table.table_name }} 
+            PRIMARY KEY ({% for name in constraint.column_names %} 
+                {{ name }}{% if loop.last %}{% else %},{% endif %}
+            {% endfor %});
+        {% endif -%}
+    {%- endfor -%}   
+{% endfor %}
+
+-- create relationship tables, columns, and constraints
+{%- for relationship in relationships -%}
+    {% if relationship.relationship_type == "ManyToMany" %}
+    CREATE TABLE {%- for table_name in relationship.table_names -%}{{table_name}}_{%- endfor -%}relationship (
+        {% for table_name in relationship.table_names %}
+            {{table_name}}id BIGINT REFERENCES {{table_name}}({{table_name}}_id){% if loop.last %}{% else %},{% endif %}
+        {% endfor %}
+        PRIMARY KEY ({% for table_name in relationship.table_names %}{{table_name}}_id{% if loop.last %}{% else %},{% endif %}{% endfor %})
+    );
+    {% endif %}
+{% endfor %}

@@ -1,13 +1,13 @@
 {
     "database": {
-        "database_name": "LoginDb",
+        "database_name": "login_db",
         "relationships": [
             {
-                "table_names": ["User", "Session"],
+                "table_names": ["user", "session"],
                 "relationship_type": "ManyToMany"
             }
         ],
-        "dialect": "SqlServer",
+        "dialect": "Postgres",
         "queries": [],
         "tables": [
             {
@@ -15,7 +15,7 @@
                     {
                         "column_type": "Integer",
                         "names": [
-                            "UserId"
+                            "user_id"
                         ],
                         "nullable": false,
                         "auto_increment": true
@@ -23,18 +23,18 @@
                     {
                         "column_type": "String",
                         "names": [
-                        	"AddressLine2",
-                            "AddressLine3"
+                        	"address_line_2",
+                            "address_line_3"
                         ],
                         "nullable": true
                     },
                     {
                         "column_type": "String",
                         "names": [
-                            "AddressLine1",
-                            "City",
-                            "State",
-                            "ZipCode"
+                            "address_line_1",
+                            "city",
+                            "state",
+                            "zip_code"
                         ],
                         "nullable": false
                     }
@@ -44,18 +44,18 @@
                     {
                         "constraint_type": "PrimaryKey",
                         "column_names": [
-                            "UserId"
+                            "user_id"
                         ]
                     }
                 ],
-                "table_name": "User"
+                "table_name": "user"
             },
             {
                 "columns": [
                     {
                         "column_type": "Integer",
                         "names": [
-                            "SessionId"
+                            "session_id"
                         ],
                         "nullable": false,
                         "auto_increment": true
@@ -63,9 +63,9 @@
                     {
                         "column_type": "Date",
                         "names": [
-                            "BeginDate",
-                            "EndDate",
-                            "LastActiveDate"
+                            "begin_date",
+                            "end_date",
+                            "last_active_date"
                         ],
                         "nullable": true
                     }
@@ -75,7 +75,7 @@
                     {
                         "constraint_type": "PrimaryKey",
                         "column_names": [
-                            "SessionId"
+                            "session_id"
                         ]
                     }
                 ],
