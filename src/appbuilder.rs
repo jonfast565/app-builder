@@ -1,6 +1,7 @@
 use crate::dbbuilder::{DbSchema, Dialect};
 use tera::{Context, Tera};
 
+use std::path::Path;
 use std::fs;
 use std::fs::File;
 use std::io::{Write};
@@ -60,7 +61,9 @@ impl AppBuilder {
         };
 
         println!("Writing file...");
-        fs::create_dir("./results").unwrap();
+        if !Path::new("./results").exists() {
+            fs::create_dir("./results").unwrap();
+        }
         let mut output = File::create("./results/sql-result.sql").unwrap();
         write!(output, "{}", get_rendered).unwrap();
     }
