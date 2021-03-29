@@ -1,5 +1,6 @@
 // https://stackoverflow.com/questions/33759072/why-doesnt-vect-implement-the-display-trait
 use std::fmt;
+use crate::dbbuilder::{Dialect};
 
 pub struct SliceDisplay<'a, T: 'a>(pub &'a [T]);
 
@@ -17,3 +18,12 @@ impl<'a, T: fmt::Display + 'a> fmt::Display for SliceDisplay<'a, T> {
         Ok(())
     }
 }
+
+pub fn process_header(a : String, dialect: Dialect) -> String {
+    if dialect == Dialect::Postgres || dialect == Dialect::Sqlite {
+        a.replace(" ", "_")
+    } else {
+        a.replace(" ", "")
+    }
+}
+

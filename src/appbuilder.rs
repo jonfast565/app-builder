@@ -22,6 +22,12 @@ impl AppBuilder {
         }
     }
 
+    pub fn init_from_schema(schema: DbSchema) -> AppBuilder {
+        AppBuilder {
+            schema: schema
+        }
+    }
+
     pub fn template(&self) {
         self.template_database();
     }

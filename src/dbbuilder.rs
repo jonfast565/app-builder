@@ -1,4 +1,7 @@
+use crate::csvbuilder::CsvDocument;
+use crate::utilities;
 use crate::utilities::SliceDisplay;
+use regex::{Match, Matches, Regex};
 use serde::{Deserialize, Serialize};
 
 pub trait SemanticCheck {
@@ -20,10 +23,12 @@ pub enum ConstraintType {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum ColumnType {
-    IntegerType,
-    StringType,
-    BinaryType,
-    DateType,
+    Integer,
+    String,
+    Decimal,
+    Binary,
+    Date,
+    Boolean,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -72,7 +77,7 @@ pub struct Constraint {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Column {
-    pub column_type: String,
+    pub column_type: ColumnType,
     pub names: Vec<String>,
     pub nullable: bool,
     pub auto_increment: Option<bool>,
@@ -130,6 +135,76 @@ impl DbSchema {
     pub fn lowercase_ids(&mut self) {
         for table in &mut self.database.tables {
             table.lowercase_name();
+        }
+    }
+
+    pub fn from_csv_document(
+        doc: &CsvDocument,
+        database_name: String,
+        table_name: String,
+        dialect: Dialect,
+    ) -> DbSchema {
+        let column_names = doc
+            .header
+            .clone()
+            .into_iter()
+            .map(|x| utilities::process_header(x, dialect.clone()))
+            .collect::<Vec<String>>();
+        let data_types = doc
+            .first_row
+            .clone()
+            .into_iter()
+            .map(|x| {
+                lazy_static! {
+                    static ref INTEGER_RE: Regex = Regex::new(r"^[0-9]+$").unwrap();
+                    static ref STRING_RE: Regex = Regex::new(r"^[a-zA-Z]+$").unwrap();
+                    static ref DECIMAL_RE: Regex = Regex::new(r"^[0-9]+\.[0-9]+$").unwrap();
+                    static ref BINARY_RE: Regex = Regex::new(r"^0x[a-fA-F0-9]*$").unwrap();
+                    static ref DATE_RE: Regex = Regex::new(r"^\d{2}/\d{2}/\d{4}$").unwrap();
+                    static ref BOOLEAN_RE: Regex = Regex::new(r"^true|false$").unwrap();
+                }
+
+                if INTEGER_RE.is_match(&x.to_string()) {
+                    ColumnType::Integer
+                } else if STRING_RE.is_match(&x.to_string()) {
+                    ColumnType::String
+                } else if DECIMAL_RE.is_match(&x.to_string()) {
+                    ColumnType::Decimal
+                } else if BINARY_RE.is_match(&x.to_string()) {
+                    ColumnType::Binary
+                } else if DATE_RE.is_match(&x.to_string()) {
+                    ColumnType::Date
+                } else if BOOLEAN_RE.is_match(&x.to_string()) {
+                    ColumnType::Boolean
+                } else {
+                    ColumnType::String
+                }
+            })
+            .collect::<Vec<ColumnType>>();
+
+        let zipped = column_names.iter().zip(data_types.iter());
+        let columns = zipped
+            .into_iter()
+            .map(|x| Column {
+                names: vec![x.0.to_string()],
+                column_type: x.1.clone(),
+                nullable: true,
+                auto_increment: None,
+            })
+            .collect::<Vec<Column>>();
+        DbSchema {
+            database: Database {
+                database_name: database_name,
+                dialect: dialect,
+                tables: vec![Table {
+                    columns: columns,
+                    audit_fields: true,
+                    constraints: vec![],
+                    table_name: table_name,
+                }],
+                queries: vec![],
+                relationships: vec![],
+            },
         }
     }
 }
