@@ -41,7 +41,8 @@ pub fn get_args() -> ProgramArgs {
                         .long("dbname")
                         .value_name("NAME")
                         .help("Sets the database name")
-                        .takes_value(true),
+                        .takes_value(true)
+                        .required(true),
                 )
                 .arg(
                     Arg::with_name("dialect")
@@ -49,7 +50,8 @@ pub fn get_args() -> ProgramArgs {
                         .long("dialct")
                         .value_name("SERVER TYPE")
                         .help("Sets the server dialect")
-                        .takes_value(true),
+                        .takes_value(true)
+                        .required(true),
                 )
                 .arg(
                     Arg::with_name("file-names")
@@ -59,7 +61,8 @@ pub fn get_args() -> ProgramArgs {
                         .help("Sets the file names to pull from")
                         .takes_value(true)
                         .multiple(true)
-                        .number_of_values(1),
+                        .number_of_values(1)
+                        .required(true),
                 ),
         )
         .subcommand(
@@ -73,7 +76,8 @@ pub fn get_args() -> ProgramArgs {
                         .long("config")
                         .value_name("PATH")
                         .help("Sets a path to a usable config file")
-                        .takes_value(true),
+                        .takes_value(true)
+                        .required(true),
                 ),
         )
         .get_matches();
