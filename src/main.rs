@@ -30,7 +30,7 @@ fn main() -> Result<(), Error> {
             let csv_result = csvbuilder::get_csv(b'\t', rdr, utilities::get_file_name(file.to_string()), true);
             csv_doc_vec.push(csv_result);
         }
-        let result = DbSchema::from_csv_document(csv_doc_vec, csv_options.database_name, Dialect::Postgres);
+        let result = DbSchema::from_csv_document(csv_doc_vec, csv_options.database_name, Dialect::SqlServer);
         let app_builder = AppBuilder::init_from_schema(result);
         app_builder.template();
     }

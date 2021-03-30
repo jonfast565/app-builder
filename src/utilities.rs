@@ -22,7 +22,7 @@ impl<'a, T: fmt::Display + 'a> fmt::Display for SliceDisplay<'a, T> {
 
 pub fn process_header(a : String, dialect: Dialect) -> String {
     if dialect == Dialect::Postgres || dialect == Dialect::Sqlite {
-        a.replace(" ", "_").replace(" ", "_").replace(")", "").replace("(", "").replace("\t", "").to_lowercase()
+        a.replace(" ", "_").replace(" ", "_").replace(" - ", "_").replace(")", "").replace("(", "").replace("\t", "").to_lowercase()
     } else {
         a.replace(" ", "").replace(")", "").replace("(", "").replace("\t", "")
     }

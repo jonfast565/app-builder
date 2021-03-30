@@ -14,10 +14,10 @@ CREATE TABLE {{ table.table_name }} (
             {{ name }}
             {% if column.column_type == "String" %} character varying(255) {% endif %}
             {% if column.column_type == "Integer" %}{% if column.auto_increment %} bigserial {% else %} bigint {% endif %} {% endif %}
-            {% if column.column_type == "Binary" %} character varying(255) {% endif %}
             {% if column.column_type == "Date" %} timestamp with time zone {% endif %}
             {% if column.column_type == "Boolean" %} boolean {% endif %}
             {% if column.column_type == "Binary" %} bytea {% endif %}
+            {% if column.column_type == "Decimal" %} decimal(10,10) {% endif %}
             {% if column.nullable %} null {% else %} not null {% endif %}
             {% if loop.last %}{% else %},{% endif %}
         {% endfor -%}
