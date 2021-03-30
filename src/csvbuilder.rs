@@ -13,7 +13,7 @@ pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_o
 
     let mut counter = 0;
     let mut header = Vec::<String>::new();
-    let mut columns = Vec::<Vec<String>>::new();
+    let mut rows = Vec::<Vec<String>>::new();
 
     for result in rdr.records() {
         let unwrapped = result.unwrap();
@@ -28,12 +28,12 @@ pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_o
             print!("{:?}", column);
         }
         print!("\n");
-        if first_row_only {
-            break;
-        }
-
         if counter != 0 {
-            columns.push(column_vec);
+            rows.push(column_vec);
+        }
+        
+        if first_row_only && counter == 1 {
+            break;
         }
 
         counter += 1;
@@ -42,7 +42,7 @@ pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_o
     CsvDocument {
         name: filename,
         header: header,
-        first_row: columns[0].clone(),
-        document: columns,
+        first_row: rows[0].clone(),
+        document: rows,
     }
 }

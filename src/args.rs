@@ -1,5 +1,7 @@
 use crate::dbbuilder::Dialect;
-use clap::{App, Arg, SubCommand};
+use crate::utilities;
+use clap::{App, Arg, SubCommand, AppSettings};
+use glob::glob;
 
 #[derive(PartialEq)]
 pub enum ProgramType {
@@ -24,10 +26,11 @@ pub struct ProgramArgs {
 }
 
 pub fn get_args() -> ProgramArgs {
-    let matches = App::new("App Builder")
+    let app = App::new("App Builder")
         .version("1.0")
         .author("Jon F. <jnfstdj656@gmail.com>")
         .about("Builds app components in a couple of keystrokes")
+        .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(
             SubCommand::with_name("csv-builder")
                 .about(
@@ -47,18 +50,18 @@ pub fn get_args() -> ProgramArgs {
                 .arg(
                     Arg::with_name("dialect")
                         .short("d")
-                        .long("dialct")
+                        .long("dialect")
                         .value_name("SERVER TYPE")
                         .help("Sets the server dialect")
                         .takes_value(true)
                         .required(true),
                 )
                 .arg(
-                    Arg::with_name("file-names")
+                    Arg::with_name("file-glob")
                         .short("fns")
-                        .long("filenames")
-                        .value_name("NAME")
-                        .help("Sets the file names to pull from")
+                        .long("fileglob")
+                        .value_name("GLOB PATTERN")
+                        .help("Sets the glob pattern to use to get filenames")
                         .takes_value(true)
                         .multiple(true)
                         .number_of_values(1)
@@ -79,30 +82,33 @@ pub fn get_args() -> ProgramArgs {
                         .takes_value(true)
                         .required(true),
                 ),
-        )
-        .get_matches();
+        );
+        let matches = &app.get_matches();
     
-    if let Some(_matches) = matches.subcommand_matches("csv-builder") {
+    if let Some(csv_matches) = matches.subcommand_matches("csv-builder") {
+        let mut filenames = Vec::<String>::new();
+        for entry in glob(csv_matches.value_of("file-glob").unwrap()).expect("Failed to read glob pattern") {
+            filenames.push(utilities::pathbuf_to_string(&entry.unwrap()));
+        }
         return ProgramArgs {
             runtime: ProgramType::CsvDatabase,
             db_builder_args: None,
             csv_builder_args: Some(CsvBuilderArgs {
-                database_name: matches
+                database_name: csv_matches
                     .value_of("database-name")
                     .unwrap_or("DefaultDb")
                     .to_string(),
                 dialect: Dialect::Postgres,
-                file_names: values_t!(matches.values_of("file-names"), String)
-                    .unwrap_or_else(|e| e.exit()),
+                file_names: filenames
             }),
         };
     }
 
-    if let Some(_matches) = matches.subcommand_matches("database-builder") {
+    if let Some(db_matches) = matches.subcommand_matches("database-builder") {
         return ProgramArgs {
             runtime: ProgramType::AppDatabase,
             db_builder_args: Some(DatabaseBuilderArgs {
-                config_file_path: matches
+                config_file_path: db_matches
                     .value_of("config-file")
                     .unwrap_or("./config.json")
                     .to_string(),

@@ -16,7 +16,7 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["csv-builder", "--dbname", "Test", "--dialect", "Postgres",  "--fileglob", "C:\\Users\\jnfst\\Desktop\\OasisFiles\\**\\*.txt"],
             "program": "${workspaceFolder}/target/debug/app-builder",
             "cwd": "${workspaceFolder}/target/debug/",
             "sourceLanguages": [
