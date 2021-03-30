@@ -33,9 +33,9 @@ pub fn get_csv<R: io::Read>(
             } else {
                 column_vec.push(column.to_string());
             }
-            print!("{}, ", column);
+            //print!("{}, ", column);
         }
-        print!("\n");
+        //print!("\n");
         if counter != 0 {
             rows.push(column_vec);
         }

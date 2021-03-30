@@ -13,20 +13,22 @@ CREATE TABLE {{ table.table_name }} (
         {%- for name in column.names %}
             {{ name }}
             {% if column.column_type == "String" %} character varying(255) {% endif %}
-            {% if column.column_type == "Integer" %}{% if column.auto_increment %} BIGSERIAL {% else %} BIGINT {% endif %} {% endif %}
+            {% if column.column_type == "Integer" %}{% if column.auto_increment %} bigserial {% else %} bigint {% endif %} {% endif %}
             {% if column.column_type == "Binary" %} character varying(255) {% endif %}
             {% if column.column_type == "Date" %} timestamp with time zone {% endif %}
-            {% if column.nullable %} NULL {% else %} NOT NULL {% endif %}
+            {% if column.column_type == "Boolean" %} boolean {% endif %}
+            {% if column.column_type == "Binary" %} bytea {% endif %}
+            {% if column.nullable %} null {% else %} not null {% endif %}
             {% if loop.last %}{% else %},{% endif %}
         {% endfor -%}
         {% if loop.last %}{% else %},{% endif %}
     {%- endfor -%}
     {% if table.audit_fields %}
             ,
-            created_date_time timestamp with time zone NOT NULL DEFAULT NOW(),
-            created_by character varying(MAX) NOT NULL DEFAULT current_user,
-            updated_date_time timestamp with time zone NOT NULL DEFAULT NOW(),
-            updated_by character varying(MAX) NOT NULL DEFAULT current_user
+            created_date_time timestamp with time zone not null default now(),
+            created_by character varying(MAX) not null default current_user,
+            updated_date_time timestamp with time zone not null default now(),
+            updated_by character varying(MAX) not null default current_user
     {% endif %}
 );
 {% endfor %}

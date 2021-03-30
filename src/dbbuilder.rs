@@ -172,26 +172,27 @@ impl DbSchema {
                 .into_iter()
                 .map(|x| {
                     lazy_static! {
-                        static ref INTEGER_RE: Regex = Regex::new(r"^[0-9]+$").unwrap();
-                        static ref STRING_RE: Regex = Regex::new(r"^[a-zA-Z]+$").unwrap();
-                        static ref DECIMAL_RE: Regex = Regex::new(r"^[0-9]+\.[0-9]+$").unwrap();
-                        static ref BINARY_RE: Regex = Regex::new(r"^0x[a-fA-F0-9]*$").unwrap();
-                        static ref DATE_RE: Regex = Regex::new(r"^\d{2}/\d{2}/\d{4}$").unwrap();
-                        static ref BOOLEAN_RE: Regex = Regex::new(r"^true|false$").unwrap();
+                        static ref INTEGER_RE: Regex = Regex::new(r"[0-9]+").unwrap();
+                        static ref STRING_RE: Regex = Regex::new(r"[a-zA-Z0-9]+").unwrap();
+                        static ref DECIMAL_RE: Regex = Regex::new(r"[0-9]+\.[0-9]+").unwrap();
+                        static ref BINARY_RE: Regex = Regex::new(r"0x[a-fA-F0-9]*").unwrap();
+                        static ref DATE_RE: Regex = Regex::new(r"\d{1,2}/\d{1,2}/\d{2, 4}").unwrap();
+                        static ref BOOLEAN_RE: Regex = Regex::new(r"true|false|True|False").unwrap();
                     }
 
-                    if INTEGER_RE.is_match(&x.to_string()) {
-                        ColumnType::Integer
-                    } else if STRING_RE.is_match(&x.to_string()) {
-                        ColumnType::String
-                    } else if DECIMAL_RE.is_match(&x.to_string()) {
+                    let matcher = &x.to_string();
+                    if DECIMAL_RE.is_match(matcher) {
                         ColumnType::Decimal
-                    } else if BINARY_RE.is_match(&x.to_string()) {
+                    } else if BINARY_RE.is_match(matcher) {
                         ColumnType::Binary
-                    } else if DATE_RE.is_match(&x.to_string()) {
+                    } else if DATE_RE.is_match(matcher) {
                         ColumnType::Date
-                    } else if BOOLEAN_RE.is_match(&x.to_string()) {
+                    } else if BOOLEAN_RE.is_match(matcher) {
                         ColumnType::Boolean
+                    } else if INTEGER_RE.is_match(matcher) {
+                        ColumnType::Integer
+                    } else if STRING_RE.is_match(matcher) {
+                        ColumnType::String
                     } else {
                         ColumnType::String
                     }
@@ -212,7 +213,7 @@ impl DbSchema {
 
             let table = Table {
                 columns: columns,
-                audit_fields: true,
+                audit_fields: false,
                 constraints: vec![],
                 table_name: doc.name,
             };
