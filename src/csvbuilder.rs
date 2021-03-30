@@ -8,8 +8,16 @@ pub struct CsvDocument {
     pub document: Vec<Vec<String>>,
 }
 
-pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_only: bool) -> CsvDocument {
-    let mut rdr = ReaderBuilder::new().delimiter(delimiter).from_reader(rdr);
+pub fn get_csv<R: io::Read>(
+    delimiter: u8,
+    rdr: R,
+    filename: String,
+    first_row_only: bool,
+) -> CsvDocument {
+    let mut rdr = ReaderBuilder::new()
+        .delimiter(delimiter)
+        .has_headers(false)
+        .from_reader(rdr);
 
     let mut counter = 0;
     let mut header = Vec::<String>::new();
@@ -25,13 +33,13 @@ pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_o
             } else {
                 column_vec.push(column.to_string());
             }
-            print!("{:?}", column);
+            print!("{}, ", column);
         }
         print!("\n");
         if counter != 0 {
             rows.push(column_vec);
         }
-        
+
         if first_row_only && counter == 1 {
             break;
         }
