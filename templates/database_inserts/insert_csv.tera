@@ -1,0 +1,9 @@
+INSERT INTO {{table}} ({{{%- for column in table.columns -%} {{column}} {% if loop.last %}{% else %},{% endif %} {% endfor %}}}) VALUES (
+    {%- for row in table.rows -%} 
+        {{column}} 
+        {%- for column_value in row.values -%}
+            {{column_value}}
+            {% if loop.last %}{% else %},{% endif %}
+        {% endfor %}
+    {% endfor %}
+);
