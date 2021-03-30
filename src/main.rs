@@ -1,4 +1,5 @@
 #[macro_use] extern crate lazy_static;
+#[macro_use] extern crate clap;
 
 use std::fs;
 use std::fs::{File};
@@ -17,16 +18,19 @@ fn main() -> Result<(), Error> {
     println!("--- App Builder ---");
     let options = args::get_args();
     if options.runtime == ProgramType::AppDatabase {
-        let filename = "./config.json";
         println!("Reading config...");
-        let contents = fs::read_to_string(filename)?;
+        let contents = fs::read_to_string(options.db_builder_args.unwrap().config_file_path)?;
         let app_builder = AppBuilder::init(contents);
         app_builder.template();
     } else if options.runtime == ProgramType::CsvDatabase {
-        let rdr = File::open("C:\\Users\\jfast\\OneDrive - American College of Cardiology\\Desktop\\
-        Oasis Bulk Export Files 03292021\\AllCreditRequests.txt").unwrap();
-        let csv_result = csvbuilder::get_csv(b'\t', rdr, true);
-        let result = DbSchema::from_csv_document(&csv_result, "CSVDatabase".to_string(), "CSVTable".to_string(), Dialect::Postgres);
+        let csv_options = options.csv_builder_args.unwrap();
+        let mut csv_doc_vec = Vec::<csvbuilder::CsvDocument>::new();
+        for file in &csv_options.file_names {
+            let rdr = File::open(&file).unwrap();
+            let csv_result = csvbuilder::get_csv(b'\t', rdr, utilities::get_file_name(file.to_string()), true);
+            csv_doc_vec.push(csv_result);
+        }
+        let result = DbSchema::from_csv_document(csv_doc_vec, csv_options.database_name, Dialect::Postgres);
         let app_builder = AppBuilder::init_from_schema(result);
         app_builder.template();
     }

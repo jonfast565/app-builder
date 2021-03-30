@@ -2,12 +2,13 @@ use csv::ReaderBuilder;
 use std::io;
 
 pub struct CsvDocument {
+    pub name: String,
     pub header: Vec<String>,
     pub first_row: Vec<String>,
     pub document: Vec<Vec<String>>,
 }
 
-pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, first_row_only: bool) -> CsvDocument {
+pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, filename: String, first_row_only: bool) -> CsvDocument {
     let mut rdr = ReaderBuilder::new().delimiter(delimiter).from_reader(rdr);
 
     let mut counter = 0;
@@ -39,6 +40,7 @@ pub fn get_csv<R: io::Read>(delimiter: u8, rdr: R, first_row_only: bool) -> CsvD
     }
 
     CsvDocument {
+        name: filename,
         header: header,
         first_row: columns[0].clone(),
         document: columns,

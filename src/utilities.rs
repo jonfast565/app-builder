@@ -1,5 +1,6 @@
 // https://stackoverflow.com/questions/33759072/why-doesnt-vect-implement-the-display-trait
 use std::fmt;
+use std::path::Path;
 use crate::dbbuilder::{Dialect};
 
 pub struct SliceDisplay<'a, T: 'a>(pub &'a [T]);
@@ -25,5 +26,9 @@ pub fn process_header(a : String, dialect: Dialect) -> String {
     } else {
         a.replace(" ", "")
     }
+}
+
+pub fn get_file_name(path: String) -> String {
+    Path::new(&path).file_name().unwrap().to_str().unwrap().to_string()
 }
 

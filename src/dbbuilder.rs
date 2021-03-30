@@ -1,8 +1,9 @@
 use crate::csvbuilder::CsvDocument;
 use crate::utilities;
 use crate::utilities::SliceDisplay;
-use regex::{Match, Matches, Regex};
+use regex::Regex;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
 pub trait SemanticCheck {
     fn is_valid(&self);
@@ -13,6 +14,19 @@ pub enum Dialect {
     SqlServer,
     Postgres,
     Sqlite,
+}
+
+impl FromStr for Dialect {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "SqlServer" => Ok(Dialect::SqlServer),
+            "Postgres" => Ok(Dialect::Postgres),
+            "Sqlite" => Ok(Dialect::Sqlite),
+            _ => Err("No match"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -139,69 +153,78 @@ impl DbSchema {
     }
 
     pub fn from_csv_document(
-        doc: &CsvDocument,
+        docs: Vec<CsvDocument>,
         database_name: String,
-        table_name: String,
         dialect: Dialect,
     ) -> DbSchema {
-        let column_names = doc
-            .header
-            .clone()
-            .into_iter()
-            .map(|x| utilities::process_header(x, dialect.clone()))
-            .collect::<Vec<String>>();
-        let data_types = doc
-            .first_row
-            .clone()
-            .into_iter()
-            .map(|x| {
-                lazy_static! {
-                    static ref INTEGER_RE: Regex = Regex::new(r"^[0-9]+$").unwrap();
-                    static ref STRING_RE: Regex = Regex::new(r"^[a-zA-Z]+$").unwrap();
-                    static ref DECIMAL_RE: Regex = Regex::new(r"^[0-9]+\.[0-9]+$").unwrap();
-                    static ref BINARY_RE: Regex = Regex::new(r"^0x[a-fA-F0-9]*$").unwrap();
-                    static ref DATE_RE: Regex = Regex::new(r"^\d{2}/\d{2}/\d{4}$").unwrap();
-                    static ref BOOLEAN_RE: Regex = Regex::new(r"^true|false$").unwrap();
-                }
+        let mut tables = Vec::<Table>::new();
 
-                if INTEGER_RE.is_match(&x.to_string()) {
-                    ColumnType::Integer
-                } else if STRING_RE.is_match(&x.to_string()) {
-                    ColumnType::String
-                } else if DECIMAL_RE.is_match(&x.to_string()) {
-                    ColumnType::Decimal
-                } else if BINARY_RE.is_match(&x.to_string()) {
-                    ColumnType::Binary
-                } else if DATE_RE.is_match(&x.to_string()) {
-                    ColumnType::Date
-                } else if BOOLEAN_RE.is_match(&x.to_string()) {
-                    ColumnType::Boolean
-                } else {
-                    ColumnType::String
-                }
-            })
-            .collect::<Vec<ColumnType>>();
+        for doc in docs {
+            let column_names = doc
+                .header
+                .clone()
+                .into_iter()
+                .map(|x| utilities::process_header(x, dialect.clone()))
+                .collect::<Vec<String>>();
+            let data_types = doc
+                .first_row
+                .clone()
+                .into_iter()
+                .map(|x| {
+                    lazy_static! {
+                        static ref INTEGER_RE: Regex = Regex::new(r"^[0-9]+$").unwrap();
+                        static ref STRING_RE: Regex = Regex::new(r"^[a-zA-Z]+$").unwrap();
+                        static ref DECIMAL_RE: Regex = Regex::new(r"^[0-9]+\.[0-9]+$").unwrap();
+                        static ref BINARY_RE: Regex = Regex::new(r"^0x[a-fA-F0-9]*$").unwrap();
+                        static ref DATE_RE: Regex = Regex::new(r"^\d{2}/\d{2}/\d{4}$").unwrap();
+                        static ref BOOLEAN_RE: Regex = Regex::new(r"^true|false$").unwrap();
+                    }
 
-        let zipped = column_names.iter().zip(data_types.iter());
-        let columns = zipped
-            .into_iter()
-            .map(|x| Column {
-                names: vec![x.0.to_string()],
-                column_type: x.1.clone(),
-                nullable: true,
-                auto_increment: None,
-            })
-            .collect::<Vec<Column>>();
+                    if INTEGER_RE.is_match(&x.to_string()) {
+                        ColumnType::Integer
+                    } else if STRING_RE.is_match(&x.to_string()) {
+                        ColumnType::String
+                    } else if DECIMAL_RE.is_match(&x.to_string()) {
+                        ColumnType::Decimal
+                    } else if BINARY_RE.is_match(&x.to_string()) {
+                        ColumnType::Binary
+                    } else if DATE_RE.is_match(&x.to_string()) {
+                        ColumnType::Date
+                    } else if BOOLEAN_RE.is_match(&x.to_string()) {
+                        ColumnType::Boolean
+                    } else {
+                        ColumnType::String
+                    }
+                })
+                .collect::<Vec<ColumnType>>();
+
+            let zipped = column_names.iter().zip(data_types.iter());
+
+            let columns = zipped
+                .into_iter()
+                .map(|x| Column {
+                    names: vec![x.0.to_string()],
+                    column_type: x.1.clone(),
+                    nullable: true,
+                    auto_increment: None,
+                })
+                .collect::<Vec<Column>>();
+
+            let table = Table {
+                columns: columns,
+                audit_fields: true,
+                constraints: vec![],
+                table_name: doc.name,
+            };
+
+            tables.push(table);
+        }
+
         DbSchema {
             database: Database {
                 database_name: database_name,
                 dialect: dialect,
-                tables: vec![Table {
-                    columns: columns,
-                    audit_fields: true,
-                    constraints: vec![],
-                    table_name: table_name,
-                }],
+                tables: tables,
                 queries: vec![],
                 relationships: vec![],
             },
