@@ -1,1 +1,1 @@
-cargo run -- csv-builder --dbname Test --dialect Postgres  --fileglob C:\Users\jnfst\Desktop\OasisFiles\**\*.txt
+cargo run -- csv-builder --dbname Test --dialect Postgres  --filedir "C:\Users\jfast\OneDrive - American College of Cardiology\Desktop\OasisFiles\"
