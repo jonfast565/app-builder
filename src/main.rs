@@ -65,7 +65,7 @@ fn template_excel(options: &ProgramArgs) {
     let mut excel_doc_vec = Vec::<models::RowDocument>::new();
     for file in &excel_options.file_names {
         println!("Reading file {}", &file);
-        let excel_result = excelbuilder::get_excel(utilities::get_file_name(file.to_string()), true);
+        let excel_result = excelbuilder::get_excel(file.to_string(), utilities::get_file_name(file.to_string()), true);
         excel_doc_vec.push(excel_result);
     }
     let result = DbSchema::from_documents(excel_doc_vec, excel_options.database_name.to_string(), excel_options.dialect.clone());

@@ -3,4 +3,6 @@
 
 /results
 /data
+
 **/*.xlsx
+**/*.csv

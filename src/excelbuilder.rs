@@ -1,8 +1,8 @@
-use calamine::{open_workbook_auto, Reader, Xlsx, DataType};
+use calamine::{open_workbook_auto, Reader, DataType};
 use crate::models::RowDocument;
 
-pub fn get_excel(filename: String, first_row_only: bool) -> RowDocument {
-    let mut excel = open_workbook_auto(filename.clone()).expect("Cannot open file");
+pub fn get_excel(file_path: String, filename: String, first_row_only: bool) -> RowDocument {
+    let mut excel = open_workbook_auto(file_path.clone()).expect("Cannot open file");
     
     // default to the first worksheet for reading.
     if let Some(Ok(r)) = excel.worksheet_range_at(0) {
@@ -13,7 +13,6 @@ pub fn get_excel(filename: String, first_row_only: bool) -> RowDocument {
         for row in r.rows() {
             let mut column_vec = Vec::<String>::new();
             for (_, c) in row.iter().enumerate() {
-
                 let value : String = match *c {
                     DataType::Empty => String::from(""),
                     DataType::String(ref s) => format!("{}", s),

@@ -3,8 +3,12 @@
  * Dialect: {{dialect}}
  */
 
--- create database
+-- create/use database
 CREATE DATABASE {{database_name}};
+GO
+
+USE {{database_name}}
+GO
 
 -- create tables
 {% for table in tables %}
