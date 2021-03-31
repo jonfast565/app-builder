@@ -2,3 +2,5 @@
 **/*.rs.bk
 
 /results
+/data
+**/*.xlsx

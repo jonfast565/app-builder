@@ -1,4 +1,4 @@
-use crate::csvbuilder::CsvDocument;
+use crate::models::RowDocument;
 use crate::utilities;
 use crate::utilities::SliceDisplay;
 use regex::Regex;
@@ -152,8 +152,8 @@ impl DbSchema {
         }
     }
 
-    pub fn from_csv_document(
-        docs: Vec<CsvDocument>,
+    pub fn from_documents(
+        docs: Vec<RowDocument>,
         database_name: String,
         dialect: Dialect,
     ) -> DbSchema {

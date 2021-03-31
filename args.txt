@@ -1,1 +1,1 @@
-cargo run -- csv-builder --dbname Test --dialect Postgres  --filedir "C:\Users\jfast\OneDrive - American College of Cardiology\Desktop\OasisFiles\"
+cargo run -- excel-builder --dbname Test --dialect Postgres  --filedir "C:\Users\jfast\OneDrive - American College of Cardiology\Desktop\OasisFiles\"

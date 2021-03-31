@@ -1,19 +1,13 @@
 use csv::ReaderBuilder;
 use std::io;
-
-pub struct CsvDocument {
-    pub name: String,
-    pub header: Vec<String>,
-    pub first_row: Vec<String>,
-    pub document: Vec<Vec<String>>,
-}
+use crate::models::RowDocument;
 
 pub fn get_csv<R: io::Read>(
     delimiter: u8,
     rdr: R,
     filename: String,
     first_row_only: bool,
-) -> CsvDocument {
+) -> RowDocument {
     let mut rdr = ReaderBuilder::new()
         .delimiter(delimiter)
         .has_headers(false)
@@ -45,7 +39,7 @@ pub fn get_csv<R: io::Read>(
         counter += 1;
     }
 
-    CsvDocument {
+    RowDocument {
         name: filename,
         header: header,
         first_row: rows[0].clone(),

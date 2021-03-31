@@ -1,7 +1,6 @@
 use crate::dbbuilder::Dialect;
 use crate::utilities;
 use clap::{App, AppSettings, Arg, SubCommand};
-use glob::glob;
 
 #[derive(PartialEq)]
 pub enum ProgramType {
@@ -33,16 +32,6 @@ pub struct ProgramArgs {
     pub db_builder_args: Option<DatabaseBuilderArgs>,
     pub csv_builder_args: Option<CsvBuilderArgs>,
     pub excel_builder_args: Option<ExcelBuilderArgs>,
-}
-
-fn get_glob_matches(directory: String, extension: String) -> Vec<String> {
-    let mut filenames = Vec::<String>::new();
-    let extension_glob = format!(r"**\*.{}", extension.as_str());
-    let file_glob = directory + &extension_glob;
-    for entry in glob(file_glob.as_str()).expect("Failed to read glob pattern") {
-        filenames.push(utilities::pathbuf_to_string(&entry.unwrap()));
-    }
-    filenames
 }
 
 pub fn get_args() -> ProgramArgs {
@@ -143,7 +132,7 @@ pub fn get_args() -> ProgramArgs {
     let matches = &app.get_matches();
 
         if let Some(excel_matches) = matches.subcommand_matches("excel-builder") {
-            let filenames = get_glob_matches(
+            let filenames = utilities::get_glob_matches(
                 excel_matches.value_of("file-dir").unwrap().to_string(),
                 "xlsx".to_string(),
             );
@@ -163,7 +152,7 @@ pub fn get_args() -> ProgramArgs {
         }
 
     if let Some(csv_matches) = matches.subcommand_matches("csv-builder") {
-        let filenames = get_glob_matches(
+        let filenames = utilities::get_glob_matches(
             csv_matches.value_of("file-dir").unwrap().to_string(),
             "csv".to_string(),
         );
