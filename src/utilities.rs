@@ -1,9 +1,9 @@
-// https://stackoverflow.com/questions/33759072/why-doesnt-vect-implement-the-display-trait
 use std::fmt;
 use glob::glob;
 use std::path::{Path, PathBuf};
 use crate::dbbuilder::{Dialect};
 
+// https://stackoverflow.com/questions/33759072/why-doesnt-vect-implement-the-display-trait
 pub struct SliceDisplay<'a, T: 'a>(pub &'a [T]);
 
 impl<'a, T: fmt::Display + 'a> fmt::Display for SliceDisplay<'a, T> {
@@ -22,7 +22,7 @@ impl<'a, T: fmt::Display + 'a> fmt::Display for SliceDisplay<'a, T> {
 }
 
 pub fn process_header(a : String, dialect: Dialect) -> String {
-    if dialect == Dialect::Postgres || dialect == Dialect::Sqlite {
+    if dialect != Dialect::SqlServer {
         a.replace(" ", "_").replace(" ", "_").replace(" - ", "_").replace(")", "").replace("(", "").replace("\t", "").to_lowercase()
     } else {
         a.replace(" ", "").replace(")", "").replace("(", "").replace("\t", "")
@@ -33,9 +33,9 @@ pub fn get_file_name(path: String) -> String {
     Path::new(&path).file_name().unwrap().to_str().unwrap().to_string()
 }
 
-pub fn path_to_string(path: &Path) -> String {
-    path.to_path_buf().into_os_string().into_string().unwrap()
-}
+//pub fn path_to_string(path: &Path) -> String {
+//    path.to_path_buf().into_os_string().into_string().unwrap()
+//}
 
 pub fn pathbuf_to_string(path: &PathBuf) -> String {
     path.clone().into_os_string().into_string().unwrap()
