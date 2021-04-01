@@ -11,6 +11,7 @@ pub fn get_csv<R: io::Read>(
     let mut rdr = ReaderBuilder::new()
         .delimiter(delimiter)
         .has_headers(false)
+        .flexible(true)
         .from_reader(rdr);
 
     let mut counter = 0;
