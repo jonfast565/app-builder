@@ -33,9 +33,9 @@ pub fn get_file_name(path: String) -> String {
     Path::new(&path).file_name().unwrap().to_str().unwrap().to_string()
 }
 
-//pub fn path_to_string(path: &Path) -> String {
-//    path.to_path_buf().into_os_string().into_string().unwrap()
-//}
+// pub fn path_to_string(path: &Path) -> String {
+//     path.to_path_buf().into_os_string().into_string().unwrap()
+// }
 
 pub fn pathbuf_to_string(path: &PathBuf) -> String {
     path.clone().into_os_string().into_string().unwrap()
