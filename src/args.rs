@@ -113,6 +113,24 @@ pub fn get_args() -> ProgramArgs {
                         .multiple(true)
                         .number_of_values(1)
                         .required(true),
+                )
+                .arg(
+                    Arg::with_name("delimiter")
+                        .short("l")
+                        .long("delimiter")
+                        .value_name("DELIMITER CHAR")
+                        .help("Sets the row delimiter to use when parsing CSV files")
+                        .takes_value(true)
+                        .required(true),
+                )
+                .arg(
+                    Arg::with_name("eol-delimiter")
+                        .short("e")
+                        .long("eoldelimiter")
+                        .value_name("DELIMITER CHAR")
+                        .help("Sets the row end delimiter to use when parsing CSV files")
+                        .takes_value(true)
+                        .required(true),
                 ),
         )
         .subcommand(
@@ -168,8 +186,8 @@ pub fn get_args() -> ProgramArgs {
                     .to_string(),
                 dialect: Dialect::from_str(csv_matches.value_of("dialect").unwrap()).unwrap(),
                 file_names: filenames,
-                delimiter: b'\t',
-                end_of_line_delimiter: b'\n'
+                delimiter: csv_matches.value_of("delimiter").unwrap().chars().nth(0).unwrap() as u8,
+                end_of_line_delimiter: csv_matches.value_of("eol-delimiter").unwrap().chars().nth(0).unwrap() as u8
             }),
         };
     }
