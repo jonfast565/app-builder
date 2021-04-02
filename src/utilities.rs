@@ -25,7 +25,8 @@ pub fn process_header(a: String, dialect: Dialect) -> String {
     let id_replacements = vec!(s(" "), s(")"), s("("), s("\t"));
     let replacer = s("");
     if dialect != Dialect::SqlServer {
-        replace_all_with(a, id_replacements, replacer).to_lowercase()
+        let b = replace_all_with(a, vec!(s(" ")), s("_"));
+        replace_all_with(b, id_replacements, replacer).to_lowercase()
     } else {
         replace_all_with(a, id_replacements, replacer)
     }
