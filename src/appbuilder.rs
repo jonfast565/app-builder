@@ -63,7 +63,7 @@ impl AppBuilder {
         
         let get_rendered = match rendered {
             Ok(val) => val,
-            Err(err) => panic!(err.to_string()),
+            Err(err) => std::panic::panic_any(err.to_string()),
         };
 
         println!("Writing file...");
