@@ -1,6 +1,7 @@
 use crate::dbbuilder::Dialect;
 use crate::utilities;
 use clap::{App, AppSettings, Arg, SubCommand};
+use std::str::FromStr;
 
 #[derive(PartialEq)]
 pub enum ProgramType {
@@ -145,7 +146,7 @@ pub fn get_args() -> ProgramArgs {
                         .value_of("database-name")
                         .unwrap_or("DefaultDb")
                         .to_string(),
-                    dialect: Dialect::SqlServer,
+                    dialect: Dialect::from_str(excel_matches.value_of("dialect").unwrap()).unwrap(),
                     file_names: filenames,
                 }),
             };
@@ -165,7 +166,7 @@ pub fn get_args() -> ProgramArgs {
                     .value_of("database-name")
                     .unwrap_or("DefaultDb")
                     .to_string(),
-                dialect: Dialect::SqlServer,
+                dialect: Dialect::from_str(csv_matches.value_of("dialect").unwrap()).unwrap(),
                 file_names: filenames,
                 delimiter: b'\t',
                 end_of_line_delimiter: b'\n'

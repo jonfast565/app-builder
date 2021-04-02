@@ -18,7 +18,6 @@ pub enum Dialect {
 
 impl FromStr for Dialect {
     type Err = &'static str;
-
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "SqlServer" => Ok(Dialect::SqlServer),
