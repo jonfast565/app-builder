@@ -51,7 +51,7 @@ fn template_csvs(options: &ProgramArgs) {
     for file in &csv_options.file_names {
         println!("Reading file {}", &file);
         let rdr = File::open(&file).unwrap();
-        let csv_result = csvbuilder::get_csv(csv_options.delimiter, rdr, utilities::get_file_name(file.to_string()), false);
+        let csv_result = csvbuilder::get_csv(csv_options.delimiter, rdr, utilities::get_file_name(file.to_string()), true);
         csv_doc_vec.push(csv_result);
     }
     let result = DbSchema::from_documents(csv_doc_vec, csv_options.database_name.to_string(), csv_options.dialect.clone());

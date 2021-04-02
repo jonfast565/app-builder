@@ -21,15 +21,21 @@ impl<'a, T: fmt::Display + 'a> fmt::Display for SliceDisplay<'a, T> {
     }
 }
 
-pub fn process_header(a: String, dialect: Dialect) -> String {
+pub fn process_column_name(a: String, dialect: Dialect) -> String {
+    let result : String;
+    if a.is_empty() {
+        result = String::from("blank");
+        return result;
+    }
     let id_replacements = vec!(s(" "), s(")"), s("("), s("\t"));
     let replacer = s("");
     if dialect != Dialect::SqlServer {
         let b = replace_all_with(a, vec!(s(" ")), s("_"));
-        replace_all_with(b, id_replacements, replacer).to_lowercase()
+        result = replace_all_with(b, id_replacements, replacer).to_lowercase();
     } else {
-        replace_all_with(a, id_replacements, replacer)
+        result = replace_all_with(a, id_replacements, replacer);
     }
+    result
 }
 
 pub fn get_file_name(path: String) -> String {

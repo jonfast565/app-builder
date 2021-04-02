@@ -13,7 +13,6 @@ GO
 -- create tables
 {% for table in tables %}
 CREATE TABLE [dbo].[{{ table.table_name }}] (
-    {% set_global is_beginning = true %}
     {%- for column in table.columns -%}
         {%- for name in column.names %}
             [{{ name }}]

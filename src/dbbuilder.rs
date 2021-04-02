@@ -163,7 +163,7 @@ impl DbSchema {
                 .header
                 .clone()
                 .into_iter()
-                .map(|x| utilities::process_header(x, dialect.clone()))
+                .map(|x| utilities::process_column_name(x, dialect.clone()))
                 .collect::<Vec<String>>();
             let data_types = doc
                 .first_row
