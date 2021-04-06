@@ -14,6 +14,6 @@ INSERT INTO {{this.table_name}} (
         {{/each}}
     )
     {{#unless @last}},{{/unless}} 
+    {{#if @last}};{{/if}}
     {{/each}}
-);
 {{/each}}
