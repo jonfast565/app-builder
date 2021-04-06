@@ -9,15 +9,13 @@ use std::io::Write;
 use std::path::Path;
 
 pub struct DataBuilder {
-    documents: Vec<RowDocument>,
     schema: DbSchema,
 }
 
 impl DataBuilder {
-    pub fn init(schema: DbSchema, documents: Vec<RowDocument>) -> DataBuilder {
+    pub fn init(schema: DbSchema) -> DataBuilder {
         println!("Getting data...");
         DataBuilder {
-            documents: documents,
             schema: schema,
         }
     }
@@ -33,13 +31,11 @@ impl DataBuilder {
         println!("Rendering template...");
 
         let mut rendered = String::new();
-        for document in &self.documents {
-            let serialized_context = json!(document);
-            let template_result = reg
-                .render_template(&template_text, &serialized_context)
-                .unwrap();
-            rendered += &template_result;
-        }
+        let serialized_context = json!(self.schema);
+        let template_result = reg
+            .render_template(&template_text, &serialized_context)
+            .unwrap();
+        rendered += &template_result;
 
         println!("Writing file...");
         if !Path::new("./results").exists() {

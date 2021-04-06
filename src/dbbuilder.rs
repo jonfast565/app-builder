@@ -110,6 +110,7 @@ pub struct Table {
     pub columns: Vec<Column>,
     pub audit_fields: bool,
     pub constraints: Vec<Constraint>,
+    pub document: RowDocument
 }
 
 impl Table {
@@ -235,11 +236,13 @@ impl DbSchema {
                 })
                 .collect::<Vec<Column>>();
 
+            let result_document = doc.clone();
             let table = Table {
                 columns: columns,
                 audit_fields: false,
                 constraints: vec![],
                 table_name: doc.name,
+                document: result_document
             };
 
             tables.push(table);

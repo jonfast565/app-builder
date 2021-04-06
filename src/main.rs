@@ -59,7 +59,7 @@ fn template_csvs(options: &ProgramArgs) {
     }
     let result = DbSchema::from_documents(csv_doc_vec.clone(), csv_options.database_name.to_string(), csv_options.dialect.clone());
     let app_builder = AppBuilder::init_from_schema(result.clone());
-    let data_builder = DataBuilder::init(result.clone(), csv_doc_vec.clone());
+    let data_builder = DataBuilder::init(result.clone());
     app_builder.template();
     data_builder.template_insert_statements();
 }
