@@ -8,8 +8,8 @@ INSERT INTO {{this.table_name}} (
     ) VALUES
     {{#each this.document.rows}}
     (
-        {{#each this.columns}}
-            {{this.column}}
+        {{#each this}}
+            '{{this}}'
             {{#unless @last}},{{/unless}} 
         {{/each}}
     )
