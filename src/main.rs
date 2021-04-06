@@ -6,6 +6,7 @@ use std::fs;
 use std::fs::{File};
 use std::io::{Error};
 use crate::appbuilder::AppBuilder;
+use crate::databuilder::DataBuilder;
 use crate::args::{ProgramType, ProgramArgs};
 use crate::dbbuilder::{DbSchema};
 
@@ -13,6 +14,7 @@ mod models;
 mod dbbuilder;
 mod utilities;
 mod appbuilder;
+mod databuilder;
 mod csvbuilder;
 mod excelbuilder;
 mod args;
@@ -57,7 +59,9 @@ fn template_csvs(options: &ProgramArgs) {
     }
     let result = DbSchema::from_documents(csv_doc_vec, csv_options.database_name.to_string(), csv_options.dialect.clone());
     let app_builder = AppBuilder::init_from_schema(result);
+    let data_builder = DataBuilder::init(csv_doc_vec);
     app_builder.template();
+    data_builder.template_insert_statements();
 }
 
 fn template_excel(options: &ProgramArgs) {
