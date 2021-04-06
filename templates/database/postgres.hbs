@@ -1,0 +1,24 @@
+/*
+ * Database Name: {{database_name}}
+ * Dialect: {{dialect}}
+ */
+
+-- create database
+create database {{database_name}};
+
+-- create tables
+{{#each tables}}
+CREATE TABLE {{ this.table_name }} (
+    {{#each this.columns}}
+            {{ this.name }}
+            {{#if this.is_integer}} bigint {{/if}}
+            {{#if this.is_binary}} bytea {{/if}}
+            {{#if this.is_date}} timestamp {{/if}}
+            {{#if this.is_decimal}} decimal(10, 10) {{/if}}
+            {{#if this.is_boolean}} bit {{/if}}
+            {{#if this.is_string}} character varying(1000) {{/if}}
+            {{#unless this.is_nullable}} not null {{/unless}}
+            {{#unless @last}},{{/unless}}
+    {{/each}}
+);
+{{/each}}

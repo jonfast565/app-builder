@@ -1,0 +1,32 @@
+/*
+ * Database Name: [{{database_name}}]
+ * Dialect: {{dialect}}
+ */
+
+-- create/use database
+CREATE DATABASE [{{database_name}}]
+GO
+
+USE [{{database_name}}]
+GO
+
+-- create tables
+{{#each tables}}
+CREATE TABLE [{{ this.table_name }}] (
+    {{#each this.columns}}
+            [{{ this.name }}]
+            {{#if this.is_integer}} BIGINT {{/if}}
+            {{#if this.is_binary}} VARBINARY(MAX) {{/if}}
+            {{#if this.is_date}} DATETIME {{/if}}
+            {{#if this.is_decimal}} DECIMAL(10, 10) {{/if}}
+            {{#if this.is_boolean}} BIT {{/if}}
+            {{#if this.is_string}} NVARCHAR(MAX) {{/if}}
+            {{#unless this.is_nullable}} NOT NULL {{/unless}}
+            {{#unless @last}},{{/unless}}
+    {{/each}}
+);
+{{/each}}
+
+-- add constraints
+
+-- create relationship tables, columns, and constraints

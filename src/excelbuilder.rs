@@ -40,12 +40,14 @@ pub fn get_excel(file_path: String, filename: String, first_row_only: bool) -> R
             counter += 1;
         }
 
-        return RowDocument {
+        let result = RowDocument {
             name: filename,
             header: header,
             first_row: rows[0].clone(),
             document: rows
-        }
+        };
+
+        return result;
     }
 
     panic!("Default sheet not found, document unable to be parsed");

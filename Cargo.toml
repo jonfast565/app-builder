@@ -6,7 +6,6 @@ edition = "2018"
 
 [dependencies]
 serde = { version = "1.0", features = [ "derive" ] }
-tera = "1.7"
 serde_json = "1.0"
 tiberius = "0.5"
 csv = "1.1"
@@ -15,3 +14,4 @@ regex = "1"
 lazy_static = "1.4"
 glob = "0.3.0"
 calamine = "0.18"
+handlebars = "3.5.4"

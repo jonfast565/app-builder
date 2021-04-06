@@ -1,5 +1,6 @@
 use crate::dbbuilder::{DbSchema, Dialect};
-use tera::{Context, Tera};
+use handlebars::Handlebars;
+use serde_json::json;
 
 use std::path::Path;
 use std::fs;
@@ -33,45 +34,36 @@ impl AppBuilder {
     }
 
     fn template_database(&self) {
-        let tera = match Tera::new("templates/database/**/*") {
-            Ok(t) => t,
-            Err(e) => {
-                panic!("Parsing error(s): {}", e);
-            }
-        };
-    
+        let mut reg = Handlebars::new();
+        reg.set_strict_mode(true);
+
         let dialect = &self.schema.database.dialect;
         let template_context: String;
         if dialect == &Dialect::SqlServer {
-            template_context = "sqlserver.tera".to_string()
+            template_context = "./templates/database/sqlserver.hbs".to_string()
         } else if dialect == &Dialect::Postgres {
-            template_context = "postgres.tera".to_string()
+            template_context = "./templates/database/postgres.hbs".to_string()
         } else if dialect == &Dialect::Sqlite {
-            template_context = "sqlite.tera".to_string()
+            template_context = "./templates/database/sqlite.hbs".to_string()
         } else {
             panic!("Dialect not valid.");
         }
         let serialized_db = &self.schema.database;
         let template_context_str = template_context.as_str();
-
+        println!("Reading template {}", &template_context_str);
+        let template_text = fs::read_to_string(template_context_str)
+            .expect("Something went wrong reading the file");
         
         println!("Rendering template...");
-        let serialized_context = Context::from_serialize(&serialized_db).unwrap();
-        let rendered = tera.render(
-            template_context_str,
-            &serialized_context,
-        );
-        
-        let get_rendered = match rendered {
-            Ok(val) => val,
-            Err(err) => std::panic::panic_any(err.to_string()),
-        };
+        let serialized_context = json!(serialized_db);
+        let rendered = reg.render_template(&template_text, &serialized_context).unwrap();
 
         println!("Writing file...");
         if !Path::new("./results").exists() {
             fs::create_dir("./results").unwrap();
         }
+
         let mut output = File::create("./results/sql-result.sql").unwrap();
-        write!(output, "{}", get_rendered).unwrap();
+        write!(output, "{}", rendered).unwrap();
     }
 }

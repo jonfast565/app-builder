@@ -1,0 +1,19 @@
+-- insert data
+{{#each tables}}
+INSERT INTO {{this.table}} (
+    {{#each this.columns}} 
+        {{column}}
+        {{#unless @last}},{{/unless}} 
+    {{/each}}
+    ) VALUES
+    {{#each this.rows}}
+    (
+        {{#each this.columns}}
+            {{column}}
+        {{/each}}
+        {{#unless @last}},{{/unless}} 
+    )
+    {{/each}}
+    {{#unless @last}},{{/unless}} 
+);
+{{/each}}

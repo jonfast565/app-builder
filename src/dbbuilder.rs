@@ -91,9 +91,17 @@ pub struct Constraint {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Column {
     pub column_type: ColumnType,
-    pub names: Vec<ValueBox>,
+    pub name: String,
     pub nullable: bool,
     pub auto_increment: Option<bool>,
+
+    // type bools for handlebars
+    pub is_integer: bool,
+    pub is_string: bool,
+    pub is_decimal: bool,
+    pub is_binary: bool,
+    pub is_date: bool,
+    pub is_boolean: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -138,7 +146,7 @@ pub struct IndexDefinition {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ValueBox {
-    value: String
+    value: String,
 }
 
 impl DbSchema {
@@ -180,8 +188,10 @@ impl DbSchema {
                         static ref STRING_RE: Regex = Regex::new(r"[a-zA-Z0-9]+").unwrap();
                         static ref DECIMAL_RE: Regex = Regex::new(r"[0-9]+\.[0-9]+").unwrap();
                         static ref BINARY_RE: Regex = Regex::new(r"0x[a-fA-F0-9]*").unwrap();
-                        static ref DATE_RE: Regex = Regex::new(r"\d{1,2}/\d{1,2}/\d{2, 4}").unwrap();
-                        static ref BOOLEAN_RE: Regex = Regex::new(r"true|false|True|False").unwrap();
+                        static ref DATE_RE: Regex =
+                            Regex::new(r"\d{1,2}/\d{1,2}/\d{2, 4}").unwrap();
+                        static ref BOOLEAN_RE: Regex =
+                            Regex::new(r"true|false|True|False").unwrap();
                     }
 
                     let matcher = &x.to_string();
@@ -207,11 +217,21 @@ impl DbSchema {
 
             let columns = zipped
                 .into_iter()
-                .map(|x| Column {
-                    names: vec![ValueBox { value: x.0.to_string() }],
-                    column_type: x.1.clone(),
-                    nullable: true,
-                    auto_increment: None,
+                .map(|x| {
+                    let column_type = x.1.clone();
+                    let result = Column {
+                        name: x.0.to_string(),
+                        column_type: column_type.clone(),
+                        nullable: true,
+                        auto_increment: None,
+                        is_integer: column_type == ColumnType::Integer,
+                        is_string: column_type == ColumnType::String,
+                        is_decimal: column_type == ColumnType::Decimal,
+                        is_binary: column_type == ColumnType::Binary,
+                        is_date: column_type == ColumnType::Date,
+                        is_boolean: column_type == ColumnType::Boolean,
+                    };
+                    result
                 })
                 .collect::<Vec<Column>>();
 

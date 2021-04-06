@@ -1,4 +1,5 @@
 #[macro_use] extern crate lazy_static;
+// #[macro_use] extern crate handlebars;
 // #[macro_use] extern crate clap;
 
 use std::fs;

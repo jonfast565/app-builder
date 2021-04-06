@@ -40,10 +40,12 @@ pub fn get_csv<R: io::Read>(
         counter += 1;
     }
 
-    RowDocument {
+    let result = RowDocument {
         name: filename,
         header: header,
         first_row: rows[0].clone(),
         document: rows,
-    }
+    };
+
+    result
 }
