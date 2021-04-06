@@ -1,12 +1,12 @@
 -- insert data
-{{#each documents}}
+{{#each tables}}
 INSERT INTO {{this.table_name}} (
     {{#each this.columns}} 
         {{this.name}}
         {{#unless @last}},{{/unless}} 
     {{/each}}
     ) VALUES
-    {{#each this.rows}}
+    {{#each this.document.rows}}
     (
         {{#each this.columns}}
             {{this.column}}

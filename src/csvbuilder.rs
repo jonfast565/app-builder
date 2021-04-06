@@ -44,7 +44,7 @@ pub fn get_csv<R: io::Read>(
         name: filename,
         header: header,
         first_row: rows[0].clone(),
-        document: rows,
+        rows: rows,
     };
 
     result

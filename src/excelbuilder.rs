@@ -44,7 +44,7 @@ pub fn get_excel(file_path: String, filename: String, first_row_only: bool) -> R
             name: filename,
             header: header,
             first_row: rows[0].clone(),
-            document: rows
+            rows: rows
         };
 
         return result;

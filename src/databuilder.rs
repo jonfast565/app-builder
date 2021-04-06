@@ -31,7 +31,7 @@ impl DataBuilder {
         println!("Rendering template...");
 
         let mut rendered = String::new();
-        let serialized_context = json!(self.schema);
+        let serialized_context = json!(&self.schema.database);
         let template_result = reg
             .render_template(&template_text, &serialized_context)
             .unwrap();
