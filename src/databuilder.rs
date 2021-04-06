@@ -1,3 +1,4 @@
+use crate::dbbuilder::DbSchema;
 use crate::models::RowDocument;
 use handlebars::Handlebars;
 use serde_json::json;
@@ -9,13 +10,15 @@ use std::path::Path;
 
 pub struct DataBuilder {
     documents: Vec<RowDocument>,
+    schema: DbSchema,
 }
 
 impl DataBuilder {
-    pub fn init(documents: Vec<RowDocument>) -> DataBuilder {
+    pub fn init(schema: DbSchema, documents: Vec<RowDocument>) -> DataBuilder {
         println!("Getting data...");
         DataBuilder {
             documents: documents,
+            schema: schema,
         }
     }
 
@@ -30,7 +33,7 @@ impl DataBuilder {
         println!("Rendering template...");
 
         let mut rendered = String::new();
-        for document in self.documents {
+        for document in &self.documents {
             let serialized_context = json!(document);
             let template_result = reg
                 .render_template(&template_text, &serialized_context)

@@ -1,5 +1,5 @@
 -- insert data
-{{#each tables}}
+{{#each documents}}
 INSERT INTO {{this.table_name}} (
     {{#each this.columns}} 
         {{this.name}}

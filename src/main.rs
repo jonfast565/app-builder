@@ -57,9 +57,9 @@ fn template_csvs(options: &ProgramArgs) {
         let csv_result = csvbuilder::get_csv(csv_options.delimiter, rdr, utilities::get_file_name(file.to_string()), true);
         csv_doc_vec.push(csv_result);
     }
-    let result = DbSchema::from_documents(csv_doc_vec, csv_options.database_name.to_string(), csv_options.dialect.clone());
-    let app_builder = AppBuilder::init_from_schema(result);
-    let data_builder = DataBuilder::init(csv_doc_vec);
+    let result = DbSchema::from_documents(csv_doc_vec.clone(), csv_options.database_name.to_string(), csv_options.dialect.clone());
+    let app_builder = AppBuilder::init_from_schema(result.clone());
+    let data_builder = DataBuilder::init(result.clone(), csv_doc_vec.clone());
     app_builder.template();
     data_builder.template_insert_statements();
 }
