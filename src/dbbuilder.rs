@@ -91,7 +91,7 @@ pub struct Constraint {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Column {
     pub column_type: ColumnType,
-    pub names: Vec<String>,
+    pub names: Vec<ValueBox>,
     pub nullable: bool,
     pub auto_increment: Option<bool>,
 }
@@ -134,6 +134,11 @@ pub struct ForeignKeyDefinition {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct IndexDefinition {
     column_names: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ValueBox {
+    value: String
 }
 
 impl DbSchema {
@@ -203,7 +208,7 @@ impl DbSchema {
             let columns = zipped
                 .into_iter()
                 .map(|x| Column {
-                    names: vec![x.0.to_string()],
+                    names: vec![ValueBox { value: x.0.to_string() }],
                     column_type: x.1.clone(),
                     nullable: true,
                     auto_increment: None,

@@ -56,9 +56,10 @@ impl AppBuilder {
 
         
         println!("Rendering template...");
+        let serialized_context = Context::from_serialize(&serialized_db).unwrap();
         let rendered = tera.render(
             template_context_str,
-            &Context::from_serialize(&serialized_db).unwrap(),
+            &serialized_context,
         );
         
         let get_rendered = match rendered {
