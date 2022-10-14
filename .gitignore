@@ -1,8 +1,1 @@
 /target
-**/*.rs.bk
-
-/results
-/data
-
-**/*.xlsx
-**/*.csv

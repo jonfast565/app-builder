@@ -1,79 +1,135 @@
-#[macro_use] extern crate lazy_static;
-// #[macro_use] extern crate handlebars;
-// #[macro_use] extern crate clap;
+extern crate pest;
+#[macro_use]
+extern crate pest_derive;
 
-use std::fs;
-use std::fs::{File};
-use std::io::{Error};
-use crate::appbuilder::AppBuilder;
-use crate::databuilder::DataBuilder;
-use crate::args::{ProgramType, ProgramArgs};
-use crate::dbbuilder::{DbSchema};
-
+mod extractors;
+mod filters;
 mod models;
-mod dbbuilder;
-mod utilities;
-mod appbuilder;
-mod databuilder;
-mod csvbuilder;
-mod excelbuilder;
-mod args;
+mod parser;
+mod utility;
 
-fn main() -> Result<(), Error> {
-    println!("--- App Builder ---");
-    println!("Working Directory: {}", std::env::current_dir().unwrap().display());
-    do_program()?;
-    println!("Done!");
+use models::{ExprNode, ExpressionChoice, FormDefinition};
+use std::fs;
+use tera::{Context, Tera};
+
+fn print_header() {
+    println!("{}", "--- AppGen Engine ----");
+    println!("{}", "Author: Jonathan Fast");
+    println!("{}\n", "Description: Generate application code easily!");
+}
+
+fn main() -> Result<(), ()> {
+    print_header();
+    println!("Initializing templating engine...");
+    let tera = get_tera_instance();
+    generate_forms(
+        "./views/idash_view.view",
+        "./target/results",
+        "blazor.tera",
+        "blazor",
+        &tera,
+    )?;
+    generate_forms(
+        "./views/idash_view.view",
+        "./target/results",
+        "term-gui.tera",
+        "cs",
+        &tera,
+    )?;
+    println!("{}", "Done!");
     Ok(())
 }
 
-fn do_program() -> Result<(), Error> {
-    let options = args::get_args();
-    if options.runtime == ProgramType::AppDatabase {
-        template_config(&options)?;
-    } else if options.runtime == ProgramType::CsvDatabase {
-        template_csvs(&options);
-    } else if options.runtime == ProgramType::ExcelDatabase {
-        template_excel(&options);
+fn generate_forms(
+    file_path: &str,
+    results_path: &str,
+    template_name: &str,
+    file_format: &str,
+    tera: &Tera,
+) -> Result<(), ()> {
+    println!("Create results directory...");
+    fs::create_dir_all(results_path).expect("Results directory could not be created");
+    let exprs = parse_file(file_path);
+    let forms = get_forms(exprs);
+    for form in forms {
+        let filename = format!("{}/form-{}.{}", results_path, form.name, file_format);
+        println!("Generating {} from {}...", filename, file_path);
+        let mut ctx = Context::new();
+        ctx.insert("name", &form.name);
+        ctx.insert("fields", &form.fields);
+        let output = tera.render(template_name, &ctx);
+        match output {
+            Ok(a) => fs::write(
+                format!("{}/form-{}.{}", results_path, form.name, file_format),
+                a,
+            )
+            .expect("file not written"),
+            Err(e) => panic!("Parsing error(s): {}", e),
+        }
     }
     Ok(())
 }
 
-fn template_config(options: &ProgramArgs) -> Result<(), Error> {
-    println!("Reading config...");
-    let contents = fs::read_to_string(options.db_builder_args.as_ref().unwrap().config_file_path.to_string())?;
-    let app_builder = AppBuilder::init(contents);
-    app_builder.template();
-    Ok(())
+fn get_tera_instance() -> Tera {
+    let mut tera = match Tera::new("templates/**/*.tera") {
+        Ok(t) => t,
+        Err(e) => {
+            println!("Parsing error(s): {}", e);
+            ::std::process::exit(1);
+        }
+    };
+    tera.register_filter("pascal_to_kebab", filters::pascal_to_kebab);
+    tera.register_filter("pascal_to_spaced", filters::pascal_to_spaced);
+    tera
 }
 
-fn template_csvs(options: &ProgramArgs) {
-    println!("Reading CSV files and determining structure.");
-    let csv_options = options.csv_builder_args.as_ref().unwrap();
-    let mut csv_doc_vec = Vec::<models::RowDocument>::new();
-    for file in &csv_options.file_names {
-        println!("Reading file {}", &file);
-        let rdr = File::open(&file).unwrap();
-        let csv_result = csvbuilder::get_csv(csv_options.delimiter, rdr, utilities::get_file_name(file.to_string()), true);
-        csv_doc_vec.push(csv_result);
+fn get_forms(exprs: Vec<ExprNode>) -> Vec<FormDefinition> {
+    let mut forms = Vec::new();
+
+    let exprs_forms: Vec<ExprNode> = exprs
+        .clone()
+        .into_iter()
+        .filter(|x| x.node_type == "form")
+        .collect();
+
+    for form in &exprs_forms {
+        let mut fields = Vec::new();
+
+        let name_array_elem = form.get_expression_by_key("name");
+        let name = match name_array_elem {
+            ExpressionChoice::Identifier(value) => value.to_string(),
+            _ => String::new(),
+        };
+
+        let field_array_elem = form.get_expression_by_key("fields");
+
+        match field_array_elem {
+            ExpressionChoice::Array(value) => {
+                for v in value {
+                    match v {
+                        ExpressionChoice::Expression(v) => fields.push(v.get_name_value_props()),
+                        _ => (),
+                    }
+                }
+            }
+            _ => (),
+        };
+
+        forms.push(FormDefinition {
+            name: name,
+            fields: fields,
+        })
     }
-    let result = DbSchema::from_documents(csv_doc_vec.clone(), csv_options.database_name.to_string(), csv_options.dialect.clone());
-    let app_builder = AppBuilder::init_from_schema(result.clone());
-    let data_builder = DataBuilder::init(result.clone());
-    app_builder.template();
-    data_builder.template_insert_statements();
+
+    forms
 }
 
-fn template_excel(options: &ProgramArgs) {
-    println!("Reading Excel files and determining structure");
-    let excel_options = options.excel_builder_args.as_ref().unwrap();
-    let mut excel_doc_vec = Vec::<models::RowDocument>::new();
-    for file in &excel_options.file_names {
-        println!("Reading file {}", &file);
-        let excel_result = excelbuilder::get_excel(file.to_string(), utilities::get_file_name(file.to_string()), true);
-        excel_doc_vec.push(excel_result);
-    }
-    let result = DbSchema::from_documents(excel_doc_vec, excel_options.database_name.to_string(), excel_options.dialect.clone());
-    let app_builder = AppBuilder::init_from_schema(result);
-    app_builder.template();
+fn parse_file(file: &str) -> Vec<ExprNode> {
+    let file = fs::read_to_string(file).expect("File not found");
+    let results = parser::parse_file(&file);
+    let unwrapped = match results {
+        Ok(p) => p,
+        Err(e) => panic!("{}", e),
+    };
+    unwrapped
 }

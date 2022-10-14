@@ -1,0 +1,89 @@
+<h3>{{name}}</h3>
+
+@using CsvHelper
+@using Dashboard.Internal.Services.Contracts
+@using Microsoft.AspNetCore.Components.Forms;
+@using System.IO
+@using System.Globalization
+
+@inject DialogService DialogService
+@inject IJSRuntime JsRuntime
+@inject IToastService Toast
+
+<RadzenTemplateForm class="form" Data="@model" Submit="@(({{name}}Model m) => HandleValidSubmit(m))">
+    {% for field in fields %}
+    <div class="form-group">
+        <RadzenLabel Text="{{field.name}}"/>
+        {% if field.type_decl.type_name == "string" %}
+        <RadzenTextBox class="form-control" Name="{{field.name | pascal_to_kebab}}" @bind-Value="model.{{field.name}}" />
+        {% if not field.type_decl.nullable %}
+        <RadzenRequiredValidator Component="{{field.name | pascal_to_kebab}}" Text="{{field.name | pascal_to_spaced}} is required" />
+        {% endif %}
+        {% elif field.type_decl.type_name == "datetime" %}
+        <RadzenDatePicker Name="{{field.name | pascal_to_kebab}}" @bind-Value="model.{{field.name}}" />
+        {% endif %}
+    </div>
+    {% endfor %}
+    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
+</RadzenTemplateForm>
+
+@code {
+    private class {{name}}Model 
+    {
+        {% for field in fields %}
+        public {{field.type_decl.type_name}}{% if field.type_decl.nullable %}?{% endif %} {{field.name}} { get; set; }
+        {% endfor %}   
+    }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+
+    private {{name}}Model model = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // TODO: Get and set parameters passed to this form
+        await RefreshData();
+    }
+
+    private async Task RefreshData()
+    {
+        try 
+        {
+            // TODO: Implement logic to refresh form data
+            await Task.Delay(1000);
+        }
+        catch (Exception e) 
+        {
+            Toast.ShowError(e.ToString());
+        }
+    }
+
+    private HandleValidSubmit({{name}}Model formModel) 
+    {
+        var saveInvoked = false;
+        try 
+        {
+            // TODO: Implement save data
+
+            // TODO: Invoke things later to fix
+            saveInvoked = true;
+            await OnSave.InvokeAsync();
+        }
+        catch (Exception e)
+        {
+            Toast.ShowError(e.ToString());
+        }
+        finally
+        {
+            if (!saveInvoked) 
+            {
+                await OnClose.InvokeAsync();
+            }
+            Toast.ShowSuccess("{{name}} updated!");
+        }
+    }
+}

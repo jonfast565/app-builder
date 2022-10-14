@@ -2,26 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/target/debug/appgen.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": false
+        },
+        {
+            "name": "(OSX) Launch",
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'app-builder'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=app-builder",
-                    "--package=app-builder"
-                ],
-                "filter": {
-                    "name": "app-builder",
-                    "kind": "bin"
-                }
-            },
-            "args": ["csv-builder", "--dbname", "Oasis", "--dialect", "Postgres",  "--filedir", "C:\\Users\\jfast\\OneDrive - American College of Cardiology\\Desktop\\OasisFiles\\", "--delimiter", "\t", "--eoldelimiter", "\n"],
-            "program": "${workspaceFolder}/target/debug/app-builder",
-            "cwd": "${workspaceFolder}/target/debug/",
-            "sourceLanguages": [
-                "rust"
-            ]
+            "program": "${workspaceRoot}/target/debug/appgen",
+            "args": [],
+            "cwd": "${workspaceRoot}",
         }
     ]
 }

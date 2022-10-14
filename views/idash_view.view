@@ -1,0 +1,14 @@
+(form
+    name: EnrollmentForm,
+    sets: [
+        (set name: "Personal Information", fields: [
+            Email, FirstName, LastName, MiddleName, PhoneNumber
+        ])
+    ],
+    fields: [
+        (decl name: Email, type: <string>),
+        (decl name: FirstName, type: <string>),
+        (decl name: LastName, type: <string>),
+        (decl name: MiddleName, type: <nullable string>),
+        (decl name: PhoneNumber, type: <string>)
+    ])

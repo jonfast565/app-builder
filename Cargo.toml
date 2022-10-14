@@ -1,17 +1,12 @@
 [package]
 name = "app-builder"
-version = "0.1.1"
-authors = ["Jon Fast <jnfstdj656@gmail.com>"]
-edition = "2018"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1.0", features = [ "derive" ] }
-serde_json = "1.0"
-tiberius = "0.5"
-csv = "1.1"
-clap = "2"
-regex = "1"
-lazy_static = "1.4"
-glob = "0.3.0"
-calamine = "0.18"
-handlebars = "3.5.4"
+pest = "2.4.0"
+pest_derive = "2.4.0"
+tera = "1.17.1"
+serde = { version = "1.0", features = ["derive"] }

@@ -1,0 +1,73 @@
+// NOTE: Requires C# 9 top-level statements
+{%- set_global counter = 0 %}
+{%- set_global width = 30 %}
+{%- set_global input_width = 50 %}
+
+using Terminal.Gui;
+
+Window InitApplication(Toplevel top)
+{
+    var window = new Window("{{name | pascal_to_spaced}}")
+    {
+        X = 0,
+        Y = 0,
+        Width = Dim.Fill(),
+        Height = Dim.Fill()
+    };
+    top.Add(window);
+    return window;
+}
+
+void InitForm(Window win, Toplevel top) 
+{
+    var scrollView = new ScrollView(new Rect(0, 0, top.Frame.Width - 3, top.Frame.Height - 2))
+    {
+        ShowVerticalScrollIndicator = true,
+        ShowHorizontalScrollIndicator = false,
+        X = 1,
+        Y = 1,
+        Width = Dim.Fill(),
+        Height = Dim.Fill(),
+        ContentOffset = new Point(0, 0),
+    };
+
+    {% for field in fields %}
+    var label{{field.name}} = new Label("{{field.name | pascal_to_spaced}}: ") { X = 0, Y = {{(loop.index * 2) - 2}} };
+    {%- if field.type_decl.type_name == "string" %}
+    var field{{field.name}} = new TextField() { X = {{width}}, Y = {{(loop.index * 2) - 2}}, Width = {{input_width}} };
+    {%- elif field.type_decl.type_name == "datetime" %}
+    var field{{field.name}} = new DateField() { X = {{width}}, Y = {{(loop.index * 2) - 2}}, Width = {{input_width}} };
+    {% endif %}
+    scrollView.Add(label{{field.name}});
+    scrollView.Add(field{{field.name}});
+    {%- set_global counter = loop.index * 2 %}
+    {% endfor %}
+    var submitButton = new Button() { X = 0, Y = {{counter}}, Text = "Submit" };
+    submitButton.Clicked += () => SubmitButton_Clicked(win);
+    scrollView.Add(submitButton);
+
+    var refreshButton = new Button() { X = {{width}}, Y = {{counter}}, Text = "Cancel" };
+    refreshButton.Clicked += () => RefreshButton_Clicked(win);
+    scrollView.Add(refreshButton);
+
+    scrollView.ContentSize = new Size(160, {{counter + 2}});
+    win.Add(scrollView);
+}
+
+void SubmitButton_Clicked(Window window)
+{
+    MessageBox.ErrorQuery(50, 5, "Error", "Not implemented yet", "Ok");
+}
+
+void RefreshButton_Clicked(Window window)
+{
+    MessageBox.ErrorQuery(50, 5, "Error", "Not implemented yet", "Ok");
+}
+
+Application.Init();
+var top = Application.Top;
+var window = InitApplication(top);
+InitForm(window, top);
+
+Application.Run();
+Application.Shutdown();

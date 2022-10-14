@@ -1,2 +1,0 @@
-cargo run -- excel-builder --dbname Oasis --dialect Postgres  --filedir "C:\Users\jfast\OneDrive - American College of Cardiology\Desktop\OasisFiles2\"
-cargo run -- csv-builder --dbname Oasis --dialect Postgres  --filedir "C:\Users\jfast\OneDrive - American College of Cardiology\Desktop\OasisFiles\" --delimiter "\t" --eoldelimiter "\n"

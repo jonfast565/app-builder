@@ -1,0 +1,47 @@
+
+// whitespace 
+WHITESPACE = _{ " " | "\n" | "\r\n" | "\t" }
+_COMMENT   = { "#" ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
+
+// constants
+alpha = { 'a'..'z' | 'A'..'Z' }
+digit = { '0'..'9' }
+lparen = @{ "(" }
+rparen = @{ ")" }
+underscore = @{ "_" }
+lbracket = @{ "[" }
+rbracket = @{ "]" }
+listsep = @{ "," }
+colon = @{":"}
+larrow = @{ "<"}
+rarrow = @{ ">"}
+
+// identifiers and constants
+identifier = @{ (underscore | alpha){1} ~ (alpha | digit | underscore)* }
+numeric_constant = @{ digit+ ~ ("." ~ digit*)? }
+
+// keywords
+keyword = @{ "decl" | "view" | "component" | "datasource" | "task" | "form" | "set" }
+nullable = @{ "nullable" }
+
+// string constant (don't change this implementation)
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+
+// compound statements
+array_list = { value ~ (listsep ~ value)* }
+array = { lbracket ~ array_list* ~ rbracket }
+
+param = { identifier ~ colon ~ value }
+param_list = { param ~ (listsep ~ param)* }
+type_declaration = { larrow ~ nullable{0, 1} ~ identifier ~ rarrow }
+
+// top level statements
+statements = { SOI ~ expr+ ~ EOI }
+expr = { lparen ~ keyword ~ param_list ~ rparen }
+value = { expr | string | numeric_constant | array | type_declaration | identifier }
