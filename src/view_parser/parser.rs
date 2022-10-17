@@ -6,7 +6,7 @@ use pest::iterators::{Pair};
 use super::super::view_parser::models::{ExprNode, Property, ExpressionChoice, TypeDecl};
 
 #[derive(Parser)]
-#[grammar = "./grammars/grammar.pest"]
+#[grammar = "./grammars/view_parser_grammar.pest"]
 struct AppGenParser;
 
 pub fn parse_file(input: &String) -> Result<Vec<ExprNode>, Error<Rule>> {
