@@ -45,8 +45,8 @@ pub fn get_forms(exprs: Vec<ExprNode>) -> Vec<FormDefinition> {
         };
 
         forms.push(FormDefinition {
-            name: name,
-            fields: fields,
+            name,
+            fields,
         })
     }
 
