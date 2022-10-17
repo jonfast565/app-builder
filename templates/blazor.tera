@@ -21,6 +21,8 @@
         {% endif %}
         {% elif field.type_decl.type_name == "datetime" %}
         <RadzenDatePicker Name="{{field.name | pascal_to_kebab}}" @bind-Value="model.{{field.name}}" />
+        {% elif field.type_decl.type_name == "bool" %}
+        <RadzenCheckBox Name="{{field.name | pascal_to_kebab}}" @bind-Value="model.{{field.name}}" TValue="bool" />
         {% endif %}
     </div>
     {% endfor %}

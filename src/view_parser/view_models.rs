@@ -5,7 +5,9 @@ use super::models::TypeDecl;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FormDefinition {
     pub name: String,
-    pub fields: Vec<FieldDefinition>
+    pub fields: Vec<FieldDefinition>,
+    pub layout: FormLayout,
+    pub field_sets: Vec<FormFieldSet>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -31,3 +33,15 @@ impl FieldDefinition {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FormLayout {
+    pub width: u64,
+    pub height: u64,
+    pub field_sets: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FormFieldSet {
+    pub name: String,
+    pub fields: Vec<String>,
+}
