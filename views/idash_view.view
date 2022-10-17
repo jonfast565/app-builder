@@ -1,5 +1,6 @@
 (form
     name: EnrollmentForm,
+    layout: (width: 1, height: 1, sets: ["Personal Information"])
     sets: [
         (set name: "Personal Information", fields: [
             Email, FirstName, LastName, MiddleName, PhoneNumber

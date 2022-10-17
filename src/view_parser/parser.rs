@@ -3,7 +3,7 @@ use pest::error::Error;
 
 use pest::iterators::{Pair};
 
-use crate::models::{ExprNode, Property, ExpressionChoice, TypeDecl};
+use super::super::view_parser::models::{ExprNode, Property, ExpressionChoice, TypeDecl};
 
 #[derive(Parser)]
 #[grammar = "./grammars/grammar.pest"]
@@ -32,7 +32,7 @@ fn unroll(root: Pair<Rule>) -> Vec<ExprNode> {
     results
 }
 
-fn filter_pairs_option<'a>(expr: &'a Pair<Rule>, rule: crate::parser::Rule) -> Option<Pair<'a, Rule>> {
+fn filter_pairs_option<'a>(expr: &'a Pair<Rule>, rule: Rule) -> Option<Pair<'a, Rule>> {
     let expr_innards = expr.clone().into_inner();
     let filter : Vec<Pair<Rule>> = expr_innards
                 .clone()
@@ -46,7 +46,7 @@ fn filter_pairs_option<'a>(expr: &'a Pair<Rule>, rule: crate::parser::Rule) -> O
     }
 }
 
-fn filter_pairs_inner_list<'a>(expr: &'a Pair<Rule>, rule: crate::parser::Rule) -> Vec<Pair<'a, Rule>> {
+fn filter_pairs_inner_list<'a>(expr: &'a Pair<Rule>, rule: Rule) -> Vec<Pair<'a, Rule>> {
     let expr_innards = expr.clone().into_inner();
     let filter : Vec<Pair<Rule>> = expr_innards
                 .clone()
@@ -55,7 +55,7 @@ fn filter_pairs_inner_list<'a>(expr: &'a Pair<Rule>, rule: crate::parser::Rule) 
     filter
 }
 
-fn filter_pairs_inner<'a>(expr: &'a Pair<Rule>, rule: crate::parser::Rule) -> Pair<'a, Rule> {
+fn filter_pairs_inner<'a>(expr: &'a Pair<Rule>, rule: Rule) -> Pair<'a, Rule> {
     let filter = filter_pairs_inner_list(expr, rule);
     let first_item = filter.first().unwrap().to_owned();
     first_item
