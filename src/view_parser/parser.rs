@@ -1,3 +1,4 @@
+
 use pest::Parser;
 use pest::error::Error;
 
@@ -61,6 +62,16 @@ fn filter_pairs_inner<'a>(expr: &'a Pair<Rule>, rule: Rule) -> Pair<'a, Rule> {
     first_item
 }
 
+fn filter_pairs_inner_fail<'a>(expr: &'a Pair<Rule>, rule: Rule) -> Option<Pair<'a, Rule>> {
+    let filter = filter_pairs_inner_list(expr, rule);
+    let first_item = filter.first();
+    let pair_rule = match first_item {
+        Some(pair) => Some(pair.to_owned()),
+        None => None
+    };
+    pair_rule
+}
+
 fn filter_pairs_inner_first<'a>(expr: &'a Pair<Rule>) -> Pair<'a, Rule> {
     let expr_innards = expr.clone().into_inner();
     let pairs_iter : Vec<Pair<Rule>> = expr_innards.into_iter().collect();
@@ -88,9 +99,14 @@ fn parse_expr(expr: Pair<Rule>) -> ExprNode {
 fn parse_array(array: Pair<Rule>) -> ExpressionChoice {
     match array.as_rule() {
         Rule::array => {
-            let array_list_filter = filter_pairs_inner(&array, Rule::array_list);
-            let array_list_parsed = parse_array_list(array_list_filter);
-            ExpressionChoice::Array(array_list_parsed)
+            let array_list_filter = filter_pairs_inner_fail(&array, Rule::array_list);
+            match array_list_filter {
+                Some(x) => {
+                    let array_list_parsed = parse_array_list(x);
+                    ExpressionChoice::Array(array_list_parsed)
+                },
+                None => ExpressionChoice::Array(Vec::new())
+            }
         }
         _ => panic!("failed to unpack exprs")
     }

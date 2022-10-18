@@ -13,6 +13,10 @@ pub fn parse_file(file: &str) -> Vec<ExprNode> {
     unwrapped
 }
 
+pub fn get_views() {
+    
+}
+
 pub fn get_form_fieldset(form_field_set_element: &ExprNode) -> FormFieldSet {
     let name = match form_field_set_element.get_expression_by_key("name") {
         ExpressionChoice::String(name) => name.as_str().to_string(),
@@ -71,26 +75,7 @@ pub fn get_form_layout(form: &ExprNode) -> FormLayout {
                 _ => panic!("failed to unpack height in layout elem"),
             };
 
-            let field_sets = match form.get_expression_by_key("fieldsets") {
-                ExpressionChoice::Array(x) => {
-                    let mut fieldsets = Vec::new();
-                    for field_set_name in x {
-                        match field_set_name {
-                            ExpressionChoice::Expression(x) => {
-                                for f in x {
-                                    match f {
-                                        ExpressionChoice::String(x) => fieldsets.push(x.as_str().to_string()),
-                                        _ => panic!("failed to unpack field set in layout elem"),
-                                    }
-                                }
-                            },
-                            _ => panic!("failed to unpack field sets in field set elem, got {}", x),
-                        }
-                    }
-                    fieldsets
-                }
-                _ => panic!("failed to unpack fieldsets in layout elem"),
-            };
+            let field_sets = get_form_fieldsets(form);
 
             FormLayout {
                 width,
@@ -102,6 +87,35 @@ pub fn get_form_layout(form: &ExprNode) -> FormLayout {
     };
 
     layout
+}
+
+fn get_form_fieldsets(form: &ExprNode) -> Vec<String> {
+    let field_sets = match form.get_expression_by_key("fieldsets") {
+        ExpressionChoice::Array(x) => {
+            let mut fieldsets = Vec::new();
+            for field_set_name in x {
+                match field_set_name {
+                    ExpressionChoice::Expression(x) => {
+                            match x.get_expression_by_key("fields") {
+                                ExpressionChoice::Array(x) => { 
+                                    for y in x {
+                                        match y {
+                                            ExpressionChoice::Identifier(x) => fieldsets.push(x.as_str().to_string()),
+                                            _ => panic!("failed to unpack field set in layout elem"),
+                                        }
+                                    }
+                                },
+                                _ => panic!("failed to unpack field set in layout elem"),
+                            }
+                        },
+                    _ => panic!("failed to unpack field sets in field set elem"),
+                }
+            }
+            fieldsets
+        }
+        _ => panic!("failed to unpack fieldsets in layout elem"),
+    };
+    field_sets
 }
 
 pub fn get_forms(exprs: Vec<ExprNode>) -> Vec<FormDefinition> {

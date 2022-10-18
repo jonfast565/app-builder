@@ -21,7 +21,7 @@ identifier = @{ (underscore | alpha){1} ~ (alpha | digit | underscore)* }
 numeric_constant = @{ digit+ ~ ("." ~ digit*)? }
 
 // keywords
-keyword = @{ "decl" | "view" | "component" | "datasource" | "task" | "form" | "layout" | "set" }
+keyword = @{ "field" | "view" | "component" | "datasource" | "task" | "form" | "layout" | "set" }
 nullable = @{ "nullable" }
 
 // string constant (don't change this implementation)
