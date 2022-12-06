@@ -2,10 +2,12 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
-mod view_parser;
 mod utilities;
+mod models;
+mod generators;
 
 use tera::{Tera};
+use generators::sql_generator::{generate_sql};
 
 fn print_header() {
     println!("{}", "--- AppGen Engine ----");
@@ -17,20 +19,15 @@ fn main() -> Result<(), ()> {
     print_header();
     println!("Initializing templating engine...");
     let tera = get_tera_instance();
-    view_parser::generators::generate_forms(
-        "./views/idash_view.view",
-        "./target/results",
-        "blazor.tera",
-        "blazor",
-        &tera,
+
+    generate_sql(
+        "./data/sql.json",
+        "./results",
+        "postgres_paged_view_query.tera",
+        "sql",
+        &tera
     )?;
-    view_parser::generators::generate_forms(
-        "./views/idash_view.view",
-        "./target/results",
-        "term-gui.tera",
-        "cs",
-        &tera,
-    )?;
+
     println!("{}", "Done!");
     Ok(())
 }

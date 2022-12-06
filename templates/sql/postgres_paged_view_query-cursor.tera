@@ -1,0 +1,38 @@
+CREATE OR REPLACE FUNCTION {{name}}(
+    param_cursor refcursor,
+    {% for i in range(end=how_many_filters) %}
+        {% for column in search_columns %}
+    param_{{column.name}}_{{i}}_enabled boolean = FALSE,
+    param_{{column.name}}_{{i}}_comparator character varying = '=',
+    param_{{column.name}}_{{i}}_value {{column.data_type}} = {% if column.data_type == "integer" %}0{% else %}''{% endif %}{% if loop.last %}{% else %},{% endif %}
+        {% endfor %}
+        {% if loop.last %}{% else %},{% endif %}
+    {% endfor %}
+) RETURNS refcursor
+AS $$
+BEGIN
+    OPEN param_cursor FOR 
+    SELECT 
+        {% for column in result_columns %}
+            {{column}}{% if loop.last %}{% else %},{% endif %}
+        {% endfor %}
+    FROM {{view}}
+    WHERE
+    {% for i in range(end=how_many_filters) %}
+    {% for column in search_columns %}
+    CASE
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '<' THEN {{column.name}} < param_{{column.name}}_{{i}}_value
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '<=' THEN {{column.name}} <= param_{{column.name}}_{{i}}_value
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '>' THEN {{column.name}} > param_{{column.name}}_{{i}}_value
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '>=' THEN {{column.name}} >= param_{{column.name}}_{{i}}_value
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '=' THEN {{column.name}} = param_{{column.name}}_{{i}}_value
+        WHEN param_{{column.name}}_{{i}}_enabled AND param_{{column.name}}_{{i}}_comparator = '<>' THEN {{column.name}} <> param_{{column.name}}_{{i}}_value 
+        ELSE TRUE
+    END
+    {% if loop.last %}{% else %}AND{% endif %}
+    {% endfor %}
+    {% if loop.last %}{% else %}AND{% endif %}
+    {% endfor %};
+    RETURN param_cursor;
+END;
+$$ LANGUAGE plpgsql;
