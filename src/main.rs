@@ -16,6 +16,8 @@ fn print_header() {
 }
 
 fn main() -> Result<(), ()> {
+
+    
     print_header();
     println!("Initializing templating engine...");
     let tera = get_tera_instance();

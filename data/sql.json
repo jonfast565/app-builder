@@ -1,16 +1,1 @@
-{
-    "queries": [
-        {
-            "name": "order",
-            "result_columns": [
-                "order_id"
-            ],
-            "view": "order",
-            "search_columns": [
-                { "name": "order_id", "data_type": "integer" }
-            ],
-            "how_many_filters": 2,
-            "return_cursor": true
-        }
-    ]
-}
+{}
