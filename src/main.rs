@@ -10,11 +10,13 @@ mod utilities;
 mod models;
 mod generators;
 
+use core::panic;
+
 use clap::Parser;
 use tera::{Tera};
 use generators::sql_generator::{generate_sql_view_from_json};
 
-use crate::models::config_models::{CliArgs, CliCommand};
+use crate::{models::config_models::{CliArgs, CliCommand, DatabaseConfig}, accessors::sql_accessor::get_columns};
 
 fn print_header() {
     println!("{}", "--- AppGen Engine ----");
@@ -30,8 +32,15 @@ fn main() -> Result<(), ()> {
     let command_line_args = CliArgs::parse();
 
     match &command_line_args.command {
-        CliCommand::BuildViewFromDatabase { connection_string } => {
-            println!("'myapp add' was used, name is: {:?}", connection_string);
+        CliCommand::BuildViewFromDatabase { connection_string, query } => {
+            let db_config = DatabaseConfig {
+                connection_string: connection_string.clone()
+            };
+            let columns = get_columns(query.to_string(), &db_config);
+            match columns {
+                Ok(columns) => {},
+                Err(err) => panic!("{:?}", err),
+            }
         },
         CliCommand::BuildViewSearchQueryFromJson => {
             generate_sql_view_from_json(

@@ -15,7 +15,10 @@ pub struct CliArgs {
 pub enum CliCommand {
    BuildViewFromDatabase {
         #[clap(short, long)]
-        connection_string: String
+        connection_string: String,
+
+        #[clap(short, long)]
+        query: String,
    },
    BuildViewSearchQueryFromJson,
 }

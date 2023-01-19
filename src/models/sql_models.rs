@@ -1,6 +1,17 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+pub enum SqlType {
+    Bool,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    String,
+    StringWithSize(i32)
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct QueryRoot {
     pub queries: Vec<PagedViewQuery>,
 }
@@ -8,7 +19,7 @@ pub struct QueryRoot {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Column {
     pub name: String,
-    pub data_type: String,
+    pub data_type: SqlType,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
