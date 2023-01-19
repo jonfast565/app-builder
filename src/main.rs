@@ -2,12 +2,19 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
+#[macro_use]
+extern crate clap;
+
+mod accessors;
 mod utilities;
 mod models;
 mod generators;
 
+use clap::Parser;
 use tera::{Tera};
-use generators::sql_generator::{generate_sql};
+use generators::sql_generator::{generate_sql_view_from_json};
+
+use crate::models::config_models::{CliArgs, CliCommand};
 
 fn print_header() {
     println!("{}", "--- AppGen Engine ----");
@@ -16,19 +23,26 @@ fn print_header() {
 }
 
 fn main() -> Result<(), ()> {
-
-    
     print_header();
     println!("Initializing templating engine...");
     let tera = get_tera_instance();
 
-    generate_sql(
-        "./data/sql.json",
-        "./results",
-        "postgres_paged_view_query.tera",
-        "sql",
-        &tera
-    )?;
+    let command_line_args = CliArgs::parse();
+
+    match &command_line_args.command {
+        CliCommand::BuildViewFromDatabase { connection_string } => {
+            println!("'myapp add' was used, name is: {:?}", connection_string);
+        },
+        CliCommand::BuildViewSearchQueryFromJson => {
+            generate_sql_view_from_json(
+                "./data/sql.json",
+                "./results",
+                "postgres_paged_view_query.tera",
+                "sql",
+                &tera
+            )?;
+        }
+    }
 
     println!("{}", "Done!");
     Ok(())

@@ -1,2 +1,2 @@
 [database]
-connection_string = ""
+connection_string = "Host=127.0.0.1;Port=15433;Database=fire;Username=postgres;"
