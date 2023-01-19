@@ -32,7 +32,7 @@ fn main() -> Result<(), ()> {
     let command_line_args = CliArgs::parse();
 
     match &command_line_args.command {
-        CliCommand::BuildViewFromDatabase { connection_string, query } => {
+        CliCommand::BuildViewFromDatabase { connection_string, query, paging, materialized } => {
             let db_config = DatabaseConfig {
                 connection_string: connection_string.clone()
             };
