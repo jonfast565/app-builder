@@ -10,13 +10,14 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
     let mut client = Client::connect(&db.connection_string, NoTls)?;
     
     println!("successful connection");
-    let query_result = client.query(&query, &[])?;
+    let use_query = query.trim_end_matches(';').to_string();
+    let query_result = client.query(&use_query, &[])?;
     
     println!("query successful");
     let first_row = query_result.first().unwrap();
     let row_columns = first_row.columns();
     let mut results = Vec::new();
-    
+
     for column in row_columns.iter() {
         let column_name = column.name().clone();
         let column_type = column.type_().clone();
