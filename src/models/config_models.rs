@@ -19,6 +19,12 @@ pub enum CliCommand {
 
         #[clap(short, long)]
         query: String,
+
+        #[clap(short, long)]
+        paging: bool,
+
+        #[clap(short, long)]
+        materialized: bool,
    },
    BuildViewSearchQueryFromJson,
 }
