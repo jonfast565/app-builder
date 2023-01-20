@@ -1,0 +1,122 @@
+@using Dashboard.Internal.Services.Contracts
+@using Microsoft.AspNetCore.Components.Forms;
+@using System.IO
+@using System.Globalization
+@using Microsoft.Extensions.Options
+
+@inject IScmClient ScmClient
+@inject DialogService DialogService
+@inject IJSRuntime JsRuntime
+@inject IToastService Toast
+@inject IOptions<AppSettings> AppSettings
+
+<h3>{{view_name}}</h3>
+
+@if (Loaded)
+{
+    <div class="spacer-20">
+        <RadzenDataGrid @ref="grid" AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@Items" TItem="{{view_name | snake_to_pascal}}" ColumnWidth="110px" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                {% for column in columns %}
+                <RadzenDataGridColumn TItem="{{view_name | snake_to_pascal}}" Property="{{column.name | snake_to_pascal}}" Filterable="true" Frozen="true" Title="{{column.name | snake_to_pascal | pascal_to_spaced}}"></RadzenDataGridColumn>
+                {% endfor %}    
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+    <div class="spacer-10">
+        <RadzenButton Click="ExportCsv">Export CSV</RadzenButton>
+    </div>
+}
+else
+{
+    <Spinner></Spinner>
+}
+
+@code {
+    public List<{{view_name | snake_to_pascal}}> Items { get; set; } = new List<{{view_name | snake_to_pascal}}>();
+    public bool Loaded { get; set; } = false;
+
+    private RadzenDataGrid<{{view_name | snake_to_pascal}}> grid;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Loaded = false;
+        await RefreshAll();
+    }
+
+    public async Task RefreshAll()
+    {
+        Loaded = false;
+        try
+        {
+            var pageOffset = 0;
+            var pageSize = AppSettings.Value.ScmPagingCapSize;
+
+            var records = new List<{{view_name | snake_to_pascal}}>();
+            List<{{view_name | snake_to_pascal}}> tempRecords = null;
+
+            {%if paging%}
+            do
+            {
+                if (tempRecords != null)
+                {
+                    tempRecords = null;
+                }
+
+                tempRecords = await ScmClient.Get{{view_name | snake_to_pascal}}(pageSize, pageOffset);
+                if (tempRecords != null)
+                {
+                    records.AddRange(tempRecords);
+                }
+                pageOffset++;
+            }
+            while (tempRecords != null && tempRecords.Any());
+            {%else%}
+            record = await ScmClient.Get{{view_name | snake_to_pascal}}();
+            {%endif%}
+
+            Items = records;
+            Loaded = true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            Toast.ShowError($"Error: {e.Message}");
+            Items = new List<{{view_name | snake_to_pascal}}>();
+            Loaded = false;
+        }
+        finally
+        {
+            Loaded = true;
+        }
+    }
+
+    public async Task ExportCsv()
+    {
+        var data = await OrderViewToCsv();
+        await JsRuntime.InvokeAsync<object>("interopExtensions.CsvExport", data, $"{{view_name | snake_to_pascal}}.csv");
+    }
+
+    public async Task<byte[]> OrderViewToCsv()
+    {
+        using (var memoryStream = new MemoryStream())
+        using (var writer = new StreamWriter(memoryStream))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteHeader<{{view_name | snake_to_pascal}}>();
+
+            await csv.NextRecordAsync();
+            foreach (var gridRow in grid.View.ToList())
+            {
+                {% for column in columns %}
+                csv.WriteField(gridRow.{{column.name | snake_to_pascal}});
+                {% endfor %} 
+                await csv.NextRecordAsync();
+            }
+
+            await writer.FlushAsync();
+            return memoryStream.ToArray();
+        }
+    }
+}

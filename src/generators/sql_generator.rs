@@ -3,13 +3,31 @@ use tera::{Tera, Context};
 use super::super::models::sql_models::*;
 
 pub fn generate_sql_view_from_database(
-    file_path: &str,
+    query: &str,
+    columns: &Vec<Column>,
+    view_name: &str,
+    paged: &bool,
+    materialized: &bool,
     results_path: &str,
     template_name: &str,
     file_format: &str,
     tera: &Tera,
-) {
+) -> Result<(), ()> {
+    println!("Create results directory...");
+    create_results_path(results_path);
 
+    let filename = format!("{}/view-{}.{}", results_path, view_name, file_format);
+    println!("Generating {} for {} with {} columns...", template_name, view_name, columns.len());
+    let mut ctx = Context::new();
+
+    ctx.insert("view_name", view_name);
+    ctx.insert("columns", columns);
+    ctx.insert("paged", paged);
+    ctx.insert("materialized", materialized);
+    ctx.insert("query", query);
+
+    render_template(tera, template_name, ctx, filename);
+    Ok(())
 }
 
 pub fn generate_sql_view_from_json(

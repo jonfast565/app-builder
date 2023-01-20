@@ -6,14 +6,14 @@ use crate::models::config_models::DatabaseConfig;
 use crate::models::sql_models::{Column, SqlType};
 
 pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Box<dyn std::error::Error>> {
-    println!("attempt connection with string:{}", &db.connection_string);
+    println!("Attempt connection to: {}.", &db.connection_string);
     let mut client = Client::connect(&db.connection_string, NoTls)?;
     
-    println!("successful connection");
+    println!("Successful connection.");
     let use_query = query.trim_end_matches(';').to_string();
     let query_result = client.query(&use_query, &[])?;
     
-    println!("query successful");
+    println!("Query successful.");
     let first_row = query_result.first().unwrap();
     let row_columns = first_row.columns();
     let mut results = Vec::new();

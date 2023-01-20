@@ -1,0 +1,2 @@
+CREATE {% if materialized == true %}MATERIALIZED{% else %}{% endif %} VIEW {{view_name}} AS
+{{query}}

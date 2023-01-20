@@ -21,10 +21,26 @@ pub enum CliCommand {
         query: String,
 
         #[clap(short, long)]
+        view_name: String,
+
+        #[clap(short, long)]
         paging: bool,
 
         #[clap(short, long)]
         materialized: bool,
+   },
+   BuildViewSearchQueryFromDatabase {
+        #[clap(short, long)]
+        connection_string: String,
+
+        #[clap(short, long)]
+        query: String,
+
+        #[clap(short, long)]
+        view_name: String,
+
+        #[clap(short, long)]
+        paging: bool,
    },
    BuildViewSearchQueryFromJson,
 }

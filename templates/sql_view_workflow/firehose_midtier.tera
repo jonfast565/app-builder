@@ -1,0 +1,88 @@
+// TODO: Remove when copying
+namespace OrderViewNamespace;
+
+///
+/// Database Accessor Object
+/// 
+public class {{view_name | snake_to_pascal}} 
+{
+    {% for column in columns %}
+    public {{column.data_type}} {{column.name}} { get; set; }
+    {% endfor %}    
+}
+
+///
+/// Database Getter
+///
+public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}()
+    {
+        var results = new List<{{view_name | snake_to_pascal}}>({%if paging%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%});
+
+        try
+        {
+            // TODO: Add order by on primary key so paging is always accurate.
+            var query = @"{{query}}{%if paging%} order by 1 limit @page_size, offset @page_size * @page_offset{%else%}{%endif%};";
+            using var conn = await _dbConnectionFactory.CreateConnection();
+            using var cmd = new NpgsqlCommand(query, conn);
+            {%if paging%}
+            cmd.Parameters.AddWithValue("@page_size", pageSize);
+            cmd.Parameters.AddWithValue("@page_offset", pageOffset);
+            {%else%}{%endif%}
+            await cmd.PrepareAsync();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (reader.HasRows)
+            {
+                while (await reader.ReadAsync())
+                {
+                    var result = new {{view_name | snake_to_pascal}}
+                    {
+                        {% for column in columns %}
+                        {{column.name | snake_to_pascal}} = reader.GetFieldValue<{{column.data_type}}>("{{column.name}}"){% if loop.last %}{% else %},{% endif %}
+                        {% endfor %}
+                    };
+                    results.Add(result);
+                }
+            }
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogErrorException(ex, "Error executing select on {{view_name}}");
+        }
+
+        return null;
+    }
+
+    ///
+    /// API Getter
+    ///
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<{{view_name | snake_to_pascal}}>))]
+    [ProducesResponseType(404)]
+    [Route("<<INSERT ROUTE HERE>>")]
+    public async Task<IActionResult> Get{{view_name | snake_to_pascal}}({%if paging%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%})
+    {
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, null, Operations.Read);
+        if (!authorizationResult.Succeeded)
+        {
+            return new ForbidResult();
+        }
+    
+        await Get{{view_name | snake_to_pascal}}({%if paging%}pageSize, pageOffset{%else%}{%endif%});
+        return Ok();
+    }
+    
+    ///
+    /// Http Getter
+    ///
+    public async Task<List<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}({%if paging%}long? pageLimit, long? pageOffset{%else%}{%endif%})
+    {
+        var request = new RestRequest("<<INSERT ROUTE HERE>>", Method.Get)
+            .AddParameter("pageLimit", pageLimit, ParameterType.QueryString)
+            .AddParameter("pageOffset", pageOffset, ParameterType.QueryString);
+        var response = await _restClient.ExecuteAsync<List<{{view_name | snake_to_pascal}}>>(request, _cts.Token);
+        var result = JsonConvert.DeserializeObject<List<{{view_name | snake_to_pascal}}>>(response.Content);
+        return result;
+    }
