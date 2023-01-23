@@ -14,17 +14,17 @@ public class {{view_name | snake_to_pascal}}
 ///
 /// Database Getter
 ///
-public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}()
+public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}({%if paged%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%})
     {
-        var results = new List<{{view_name | snake_to_pascal}}>({%if paging%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%});
+        var results = new List<{{view_name | snake_to_pascal}}>();
 
         try
         {
             // TODO: Add order by on primary key so paging is always accurate.
-            var query = @"{{query}}{%if paging%} order by 1 limit @page_size, offset @page_size * @page_offset{%else%}{%endif%};";
+            var query = @"{{query}}{%if paged%} order by 1 limit @page_size, offset @page_size * @page_offset{%else%}{%endif%};";
             using var conn = await _dbConnectionFactory.CreateConnection();
             using var cmd = new NpgsqlCommand(query, conn);
-            {%if paging%}
+            {%if paged%}
             cmd.Parameters.AddWithValue("@page_size", pageSize);
             cmd.Parameters.AddWithValue("@page_offset", pageOffset);
             {%else%}{%endif%}
@@ -62,7 +62,7 @@ public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name |
     [ProducesResponseType(200, Type = typeof(IEnumerable<{{view_name | snake_to_pascal}}>))]
     [ProducesResponseType(404)]
     [Route("<<INSERT ROUTE HERE>>")]
-    public async Task<IActionResult> Get{{view_name | snake_to_pascal}}({%if paging%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%})
+    public async Task<IActionResult> Get{{view_name | snake_to_pascal}}({%if paged%}long pageSize = long.MaxValue, long pageOffset = 0{%else%}{%endif%})
     {
         var authorizationResult = await _authorizationService.AuthorizeAsync(User, null, Operations.Read);
         if (!authorizationResult.Succeeded)
@@ -70,18 +70,21 @@ public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name |
             return new ForbidResult();
         }
     
-        await Get{{view_name | snake_to_pascal}}({%if paging%}pageSize, pageOffset{%else%}{%endif%});
+        await Get{{view_name | snake_to_pascal}}({%if paged%}pageSize, pageOffset{%else%}{%endif%});
         return Ok();
     }
     
     ///
     /// Http Getter
     ///
-    public async Task<List<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}({%if paging%}long? pageLimit, long? pageOffset{%else%}{%endif%})
+    public async Task<List<{{view_name | snake_to_pascal}}>> Get{{view_name | snake_to_pascal}}({%if paged%}long? pageLimit, long? pageOffset{%else%}{%endif%})
     {
         var request = new RestRequest("<<INSERT ROUTE HERE>>", Method.Get)
+            {%if paged%}
             .AddParameter("pageLimit", pageLimit, ParameterType.QueryString)
             .AddParameter("pageOffset", pageOffset, ParameterType.QueryString);
+            {%else%};
+            {%endif%}
         var response = await _restClient.ExecuteAsync<List<{{view_name | snake_to_pascal}}>>(request, _cts.Token);
         var result = JsonConvert.DeserializeObject<List<{{view_name | snake_to_pascal}}>>(response.Content);
         return result;
