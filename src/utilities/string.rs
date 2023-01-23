@@ -29,9 +29,15 @@ pub fn pascal_to_spaced(s: String) -> String {
     result.into_iter().collect::<String>()    
 }
 
-pub fn snake_to_pascal(s: String) -> String {
+pub fn pascal_to_camel(s: String) -> String {
+    let mut chars = s.chars().collect::<Vec<char>>();
+    chars[0] = chars[0].to_lowercase().next().unwrap();
+    chars.into_iter().collect::<String>()  
+}
+
+pub fn delimited_to_pascal(s: String, delim: &str) -> String {
     let mut result : Vec<char>  = Vec::new();
-    let splitted = s.split("_");
+    let splitted = s.split(delim);
 
     for s in splitted {
         let chars = s.chars().collect::<Vec<char>>();
@@ -49,4 +55,17 @@ pub fn snake_to_pascal(s: String) -> String {
         }
     }
     result.into_iter().collect::<String>()  
+}
+
+pub fn snake_to_pascal(s: String) -> String {
+    delimited_to_pascal(s, "_")
+}
+
+pub fn kebab_to_pascal(s: String) -> String {
+    delimited_to_pascal(s, "-")
+}
+
+pub fn snake_to_camel(s: String) -> String {
+    let pascal = snake_to_pascal(s);
+    pascal_to_camel(pascal)
 }
