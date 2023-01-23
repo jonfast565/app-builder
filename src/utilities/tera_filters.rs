@@ -42,3 +42,10 @@ pub fn snake_to_camel(value: &Value, _args: &HashMap<String, Value>) -> Result<V
         _ => Ok(value.clone())
     }
 }
+
+pub fn data_type_to_csharp_type(value: &Value, _args: &HashMap<String, Value>) -> Result<Value> {
+    match value.clone() {
+        Value::String(s) => Ok(Value::String(super::csharp::data_type_to_csharp_type(s.as_str()).to_string())),
+        _ => Ok(value.clone())
+    }
+}

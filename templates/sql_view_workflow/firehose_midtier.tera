@@ -7,7 +7,7 @@ namespace OrderViewNamespace;
 public class {{view_name | snake_to_pascal}} 
 {
     {% for column in columns %}
-    public {{column.data_type}} {{column.name}} { get; set; }
+    public {{column.data_type | data_type_to_csharp_type}}? {{column.name | snake_to_pascal}} { get; set; }
     {% endfor %}    
 }
 
@@ -38,7 +38,7 @@ public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name |
                     var result = new {{view_name | snake_to_pascal}}
                     {
                         {% for column in columns %}
-                        {{column.name | snake_to_pascal}} = reader.GetFieldValue<{{column.data_type}}>("{{column.name}}"){% if loop.last %}{% else %},{% endif %}
+                        {{column.name | snake_to_pascal}} = reader.GetFieldValue<{{column.data_type | data_type_to_csharp_type}}?>("{{column.name}}", null){% if loop.last %}{% else %},{% endif %}
                         {% endfor %}
                     };
                     results.Add(result);

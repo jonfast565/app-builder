@@ -8,7 +8,8 @@ pub enum SqlType {
     Int32,
     Int64,
     String,
-    StringWithSize(i32)
+    StringWithSize(i32),
+    Timestamp
 }
 
 #[derive(Serialize, Deserialize, Debug)]

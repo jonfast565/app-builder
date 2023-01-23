@@ -28,7 +28,9 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
             Type::INT4 => SqlType::Int32,
             Type::INT8 => SqlType::Int64,
             Type::VARCHAR => SqlType::String,
-            _ => todo!()
+            Type::TIMESTAMP => SqlType::Timestamp,
+            Type::JSONB => SqlType::String,
+            _ => todo!("{}", format!("{} - type {:?} not implemented", column_name, column_type))
         };
 
         let col = Column {

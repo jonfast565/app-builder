@@ -1,6 +1,3 @@
-#[warn(unused_variables)]
-#[warn(unused_macros)]
-
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
@@ -126,5 +123,6 @@ fn get_tera_instance() -> Tera {
     tera.register_filter("pascal_to_camel", utilities::tera_filters::pascal_to_camel);
     tera.register_filter("kebab_to_pascal", utilities::tera_filters::kebab_to_pascal);
     tera.register_filter("snake_to_camel", utilities::tera_filters::snake_to_camel);
+    tera.register_filter("data_type_to_csharp_type", utilities::tera_filters::data_type_to_csharp_type);
     tera
 }
