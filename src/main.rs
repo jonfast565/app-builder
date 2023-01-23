@@ -123,5 +123,8 @@ fn get_tera_instance() -> Tera {
         utilities::tera_filters::pascal_to_spaced,
     );
     tera.register_filter("snake_to_pascal", utilities::tera_filters::snake_to_pascal);
+    tera.register_filter("pascal_to_camel", utilities::tera_filters::pascal_to_camel);
+    tera.register_filter("kebab_to_pascal", utilities::tera_filters::kebab_to_pascal);
+    tera.register_filter("snake_to_camel", utilities::tera_filters::snake_to_camel);
     tera
 }
