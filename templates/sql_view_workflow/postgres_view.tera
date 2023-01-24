@@ -1,2 +1,3 @@
 CREATE {% if materialized == true %}MATERIALIZED{% else %}{% endif %} VIEW {{view_name}} AS
-{{query}}
+{{query}};
+-- TODO: Ensure order by on primary key so paging is always accurate.

@@ -56,7 +56,7 @@ else
             var records = new List<{{view_name | snake_to_pascal}}>();
             List<{{view_name | snake_to_pascal}}> tempRecords = null;
 
-            {%if paging%}
+            {%if paged%}
             do
             {
                 if (tempRecords != null)

@@ -20,8 +20,7 @@ public async Task<IEnumerable<{{view_name | snake_to_pascal}}>> Get{{view_name |
 
         try
         {
-            // TODO: Add order by on primary key so paging is always accurate.
-            var query = @"{{query}}{%if paged%} order by 1 limit @page_size, offset @page_size * @page_offset{%else%}{%endif%};";
+            var query = @"select {% for column in columns %}{{column.name}}{% if loop.last %}{% else %}, {% endif %}{% endfor %} from {{view_name}} {%if paged%}limit @page_size, offset @page_size * @page_offset{%else%}{%endif%};";
             using var conn = await _dbConnectionFactory.CreateConnection();
             using var cmd = new NpgsqlCommand(query, conn);
             {%if paged%}

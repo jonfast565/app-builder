@@ -14,7 +14,11 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
     let query_result = client.query(&use_query, &[])?;
     
     println!("Query successful.");
-    let first_row = query_result.first().unwrap();
+    let first_row = match query_result.first() {
+        Some(x) => x,
+        None => panic!("Couldn't get first row of this query :`{}`, consider adding a row to the table to obtain it's data.", &use_query)
+    };
+
     let row_columns = first_row.columns();
     let mut results = Vec::new();
 
@@ -29,7 +33,10 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
             Type::INT8 => SqlType::Int64,
             Type::VARCHAR => SqlType::String,
             Type::TIMESTAMP => SqlType::Timestamp,
+            Type::DATE => SqlType::Date,
             Type::JSONB => SqlType::String,
+            Type::TEXT => SqlType::Text,
+            Type::TIMESTAMPTZ => SqlType::Timestamp,
             _ => todo!("{}", format!("{} - type {:?} not implemented", column_name, column_type))
         };
 

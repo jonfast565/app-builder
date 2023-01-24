@@ -17,7 +17,9 @@ pub fn data_type_to_csharp_type(s: &str) -> &str {
         "Int32" => "int",
         "Int64" => "long",
         "String"=> "string",
-        "Timestamp" => "DateTime",    
+        "Timestamp" => "DateTime",
+        "Date" => "DateTime",
+        "Text" => "string",    
         _ => todo!("{} is not a valid type", s)
     }
 }
