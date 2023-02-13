@@ -37,7 +37,8 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
             Type::JSONB => SqlType::String,
             Type::TEXT => SqlType::Text,
             Type::TIMESTAMPTZ => SqlType::Timestamp,
-            _ => todo!("{}", format!("{} - type {:?} not implemented", column_name, column_type))
+            _ => SqlType::String
+            // todo!("{}", format!("{} - type {:?} not implemented", column_name, column_type))
         };
 
         let col = Column {
