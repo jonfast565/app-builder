@@ -52,7 +52,7 @@ fn main() -> Result<(), ()> {
                 Ok(columns) => {
                     generate_sql_view_from_database(
                         &query,
-                        &columns,
+                        &columns.columns,
                         view_name,
                         paging,
                         materialized,
@@ -63,7 +63,7 @@ fn main() -> Result<(), ()> {
                     )?;
                     generate_sql_view_from_database(
                         &query,
-                        &columns,
+                        &columns.columns,
                         view_name,
                         paging,
                         materialized,
@@ -74,7 +74,7 @@ fn main() -> Result<(), ()> {
                     )?;
                     generate_sql_view_from_database(
                         &query,
-                        &columns,
+                        &columns.columns,
                         view_name,
                         paging,
                         materialized,

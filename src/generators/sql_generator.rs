@@ -4,7 +4,7 @@ use super::super::models::sql_models::*;
 
 pub fn generate_sql_view_from_database(
     query: &str,
-    columns: &Vec<Column>,
+    columns: &Vec<SqlColumn>,
     view_name: &str,
     paged: &bool,
     materialized: &bool,

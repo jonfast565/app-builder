@@ -3,9 +3,9 @@ use std::error;
 use postgres::{Client, NoTls};
 use postgres::types::Type;
 use crate::models::config_models::DatabaseConfig;
-use crate::models::sql_models::{Column, SqlType};
+use crate::models::sql_models::{SqlColumn, SqlColumnType, SqlQueryMetadata};
 
-pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Box<dyn std::error::Error>> {
+pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<SqlQueryMetadata, Box<dyn std::error::Error>> {
     println!("Attempt connection to: {}.", &db.connection_string);
     let mut client = Client::connect(&db.connection_string, NoTls)?;
     
@@ -26,28 +26,32 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<Vec<Column>, Bo
         let column_name = column.name().clone();
         let column_type = column.type_().clone();
         let normalized_column_type = match column_type {
-            Type::BOOL => SqlType::Bool,
-            Type::CHAR => SqlType::Int8,
-            Type::INT2 => SqlType::Int16,
-            Type::INT4 => SqlType::Int32,
-            Type::INT8 => SqlType::Int64,
-            Type::VARCHAR => SqlType::String,
-            Type::TIMESTAMP => SqlType::Timestamp,
-            Type::DATE => SqlType::Date,
-            Type::JSONB => SqlType::String,
-            Type::TEXT => SqlType::Text,
-            Type::TIMESTAMPTZ => SqlType::Timestamp,
-            _ => SqlType::String
+            Type::BOOL => SqlColumnType::Bool,
+            Type::CHAR => SqlColumnType::Int8,
+            Type::INT2 => SqlColumnType::Int16,
+            Type::INT4 => SqlColumnType::Int32,
+            Type::INT8 => SqlColumnType::Int64,
+            Type::VARCHAR => SqlColumnType::UnboundedString,
+            Type::TIMESTAMP => SqlColumnType::Timestamp,
+            Type::DATE => SqlColumnType::Date,
+            Type::JSONB => SqlColumnType::UnboundedString,
+            Type::TEXT => SqlColumnType::UnboundedString,
+            Type::TIMESTAMPTZ => SqlColumnType::Timestamp,
+            _ => SqlColumnType::UnboundedString
             // todo!("{}", format!("{} - type {:?} not implemented", column_name, column_type))
         };
 
-        let col = Column {
-            name: column_name.to_string(),
-            data_type: normalized_column_type,
+        let col = SqlColumn {
+            column_name: column_name.to_string(),
+            column_type: normalized_column_type,
+            // TODO: Fill this in with correct information
+            is_auto_increment: false,
+            is_primary_key: false,
         };
 
         results.push(col);
     }
 
-    Ok(results)
+    let package = SqlQueryMetadata { columns: results };
+    Ok(package)
 } 

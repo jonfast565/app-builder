@@ -1,1 +1,55 @@
-{}
+{
+    "tables": [
+        {
+            "table_name": "test1",
+            "columns": [
+                {
+                    "name": "pk",
+                    "type": "integer",
+                    "is_primary_key": true,
+                    "is_auto_increment": true
+                },
+                {
+                    "name": "value",
+                    "type": "varchar",
+                    "min": 0,
+                    "max": 4000
+                },
+                {
+                    "name": "value2",
+                    "type": "decimal"
+                }
+            ]
+        },
+        {
+            "table_name": "test2",
+            "columns": [
+                {
+                    "name": "pk",
+                    "type": "integer",
+                    "is_primary_key": true,
+                    "is_incrementing": true
+                },
+                {
+                    "name": "value",
+                    "type": "varchar",
+                    "min": 0,
+                    "max": 4000
+                },
+                {
+                    "name": "value2",
+                    "type": "varchar",
+                    "min": 0,
+                    "max": 4000
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "source_table": "test1",
+            "target_table": "test2",
+            "relationship_type": "mxn"
+        }
+    ]
+}
