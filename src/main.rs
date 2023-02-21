@@ -1,8 +1,5 @@
 extern crate pest;
-#[macro_use]
 extern crate pest_derive;
-
-#[macro_use]
 extern crate clap;
 
 mod accessors;
@@ -19,7 +16,7 @@ use tera::Tera;
 
 use crate::{
     accessors::sql_accessor::get_columns,
-    generators::sql_generator::generate_sql_view_from_database,
+    generators::sql_generator::{generate_sql_view_from_database, generate_sql_view_from_database_2},
     models::config_models::{CliArgs, CliCommand, DatabaseConfig},
 };
 
@@ -89,11 +86,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         CliCommand::BuildViewSearchQueryFromDatabase {
-            connection_string,
+            connection_string: _,
             query,
             view_name,
             paging,
-        } => todo!(),
+        } => {
+            generate_sql_view_from_database_2(
+                &query,
+                &Vec::new(),
+                view_name,
+                paging,
+                &false,
+                "./results",
+                "sql_view_workflow/view_search_query.tera",
+                "razor",
+                &tera,
+            )?;
+        },
         CliCommand::BuildViewSearchQueryFromJson {
             path 
         } => {

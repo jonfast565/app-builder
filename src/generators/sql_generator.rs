@@ -57,3 +57,17 @@ pub fn generate_sql_view_from_json(
     }
     Ok(())
 }
+
+pub fn generate_sql_view_from_database_2(
+    _query: &str,
+    _columns: &Vec<SqlColumn>,
+    _view_name: &str,
+    _paged: &bool,
+    _materialized: &bool,
+    _results_path: &str,
+    _template_name: &str,
+    _file_format: &str,
+    _tera: &Tera,
+) -> Result<(), Box<dyn std::error::Error>> {
+    Ok(())
+}

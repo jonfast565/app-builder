@@ -1,5 +1,3 @@
-use std::error;
-
 use postgres::{Client, NoTls};
 use postgres::types::Type;
 use crate::models::config_models::DatabaseConfig;
