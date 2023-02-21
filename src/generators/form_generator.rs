@@ -1,6 +1,7 @@
 use tera::{Tera, Context};
 use super::super::utilities::directories::*;
 use super::super::utilities::tera::render_template;
+use super::super::accessors::json_accessor::read_json;
 use crate::models::form_models::Form;
 
 pub fn generate_form_from_json(
@@ -17,8 +18,7 @@ pub fn generate_form_from_json(
     println!("Generating {} for {} from {}...", template_name, "form", file_path);
     let mut ctx = Context::new();
 
-    let file_read = std::fs::read_to_string(file_path)?;
-    let deserialized: Form = serde_json::from_str(&file_read)?;
+    let deserialized = read_json::<Form>(file_path)?;
 
     ctx.insert("form", &deserialized);
 
