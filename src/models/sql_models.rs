@@ -76,8 +76,10 @@ pub struct SqlTable {
 pub struct SqlColumn {
     pub column_name: String,
     pub column_type: SqlColumnType,
+    pub nullable: bool,
     pub is_primary_key: bool,
     pub is_auto_increment: bool,
+    pub has_unique_key: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

@@ -44,9 +44,11 @@ pub fn get_columns(query: String, db: &DatabaseConfig) -> Result<SqlQueryMetadat
         let col = SqlColumn {
             column_name: column_name.to_string(),
             column_type: normalized_column_type,
+            nullable: true,
             // TODO: Fill this in with correct information
             is_auto_increment: false,
             is_primary_key: false,
+            has_unique_key: false,
         };
 
         results.push(col);
