@@ -1,9 +1,5 @@
 use serde::{Serialize, Deserialize};
 
-pub struct BasicProperties {
-    
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ButtonProps {
 
@@ -31,7 +27,7 @@ pub struct DateInputProps {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type", content = "properties")]
-pub enum ComponentType {
+pub enum Component {
     DateInput(DateInputProps),
     NumericInput(NumericInputProps),
     TextInput(TextInputProps),
@@ -40,13 +36,20 @@ pub enum ComponentType {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct TableComponent {
+    pub row: usize,
+    pub column: usize,
+    components: Vec<Component>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct TableLayoutProps {
-    
+    contents: Vec<TableComponent>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BoxLayoutProps {
-
+    components: Vec<Component>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -57,5 +60,5 @@ pub enum Layout {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Form {
-    
+    layout: Layout,
 }
