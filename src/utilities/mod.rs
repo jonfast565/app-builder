@@ -1,3 +1,4 @@
 pub mod string;
-pub mod tera_filters;
+pub mod tera;
 pub mod csharp;
+pub mod directories;

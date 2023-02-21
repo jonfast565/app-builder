@@ -56,14 +56,6 @@ pub enum Layout {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct BasicFormField {
-    pub data_type: String,
-    pub nullable: bool,
-    pub name: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct BasicForm {
-    pub name: String,
-    pub fields: Vec<BasicFormField>,
+pub struct Form {
+    
 }

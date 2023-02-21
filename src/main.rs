@@ -14,6 +14,7 @@ use core::panic;
 
 use clap::Parser;
 use generators::sql_generator::generate_sql_view_from_json;
+use generators::form_generator::generate_form_from_json;
 use tera::Tera;
 
 use crate::{
@@ -28,7 +29,7 @@ fn print_header() {
     println!("{}\n", "Description: Generate application code easily!");
 }
 
-fn main() -> Result<(), ()> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     print_header();
     println!("Initializing templating engine...");
     let tera = get_tera_instance();
@@ -93,12 +94,32 @@ fn main() -> Result<(), ()> {
             view_name,
             paging,
         } => todo!(),
-        CliCommand::BuildViewSearchQueryFromJson => {
+        CliCommand::BuildViewSearchQueryFromJson {
+            path 
+        } => {
             generate_sql_view_from_json(
-                "./data/sql.json",
+                path,
                 "./results",
                 "postgres_paged_view_query.tera",
                 "sql",
+                &tera,
+            )?;
+        },
+        CliCommand::BuildFormFromJson {
+            path 
+        } => {
+            generate_form_from_json(
+                path,
+                "./results",
+                "blazor.tera",
+                "blazor",
+                &tera,
+            )?;
+            generate_form_from_json(
+                path,
+                "./results",
+                "term-gui.tera",
+                "cs",
                 &tera,
             )?;
         }
@@ -117,12 +138,12 @@ fn get_tera_instance() -> Tera {
         }
     };
 
-    tera.register_filter("pascal_to_kebab", utilities::tera_filters::pascal_to_kebab);
-    tera.register_filter("pascal_to_spaced", utilities::tera_filters::pascal_to_spaced);
-    tera.register_filter("snake_to_pascal", utilities::tera_filters::snake_to_pascal);
-    tera.register_filter("pascal_to_camel", utilities::tera_filters::pascal_to_camel);
-    tera.register_filter("kebab_to_pascal", utilities::tera_filters::kebab_to_pascal);
-    tera.register_filter("snake_to_camel", utilities::tera_filters::snake_to_camel);
-    tera.register_filter("data_type_to_csharp_type", utilities::tera_filters::data_type_to_csharp_type);
+    tera.register_filter("pascal_to_kebab", utilities::tera::pascal_to_kebab);
+    tera.register_filter("pascal_to_spaced", utilities::tera::pascal_to_spaced);
+    tera.register_filter("snake_to_pascal", utilities::tera::snake_to_pascal);
+    tera.register_filter("pascal_to_camel", utilities::tera::pascal_to_camel);
+    tera.register_filter("kebab_to_pascal", utilities::tera::kebab_to_pascal);
+    tera.register_filter("snake_to_camel", utilities::tera::snake_to_camel);
+    tera.register_filter("data_type_to_csharp_type", utilities::tera::data_type_to_csharp_type);
     tera
 }

@@ -1,6 +1,8 @@
 use std::fs;
 use tera::{Tera, Context};
 use super::super::models::sql_models::*;
+use super::super::utilities::directories::*;
+use super::super::utilities::tera::render_template;
 
 pub fn generate_sql_view_from_database(
     query: &str,
@@ -54,20 +56,4 @@ pub fn generate_sql_view_from_json(
         render_template(tera, template_name, ctx, filename);
     }
     Ok(())
-}
-
-fn create_results_path(results_path: &str) {
-    fs::create_dir_all(results_path).expect("Results directory could not be created");
-}
-
-fn render_template(tera: &Tera, template_name: &str, ctx: Context, path: String) {
-    let output = tera.render(template_name, &ctx);
-    match output {
-        Ok(a) => fs::write(
-            path,
-            a,
-        )
-        .expect("file not written"),
-        Err(e) => panic!("Parsing error(s): {}", e),
-    }
 }

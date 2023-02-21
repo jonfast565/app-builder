@@ -42,5 +42,12 @@ pub enum CliCommand {
         #[clap(short, long)]
         paging: bool,
    },
-   BuildViewSearchQueryFromJson,
+   BuildViewSearchQueryFromJson {
+      #[clap(short, long)]
+      path: String,
+   },
+   BuildFormFromJson {
+      #[clap(short, long)]
+      path: String,
+   }
 }

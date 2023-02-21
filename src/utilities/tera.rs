@@ -1,4 +1,5 @@
-use tera::{Result, Value};
+use tera::{Result, Value, Tera, Context};
+use std::fs;
 use std::collections::HashMap;
 
 pub fn pascal_to_kebab(value: &Value, _args: &HashMap<String, Value>) -> Result<Value> {
@@ -47,5 +48,17 @@ pub fn data_type_to_csharp_type(value: &Value, _args: &HashMap<String, Value>) -
     match value.clone() {
         Value::String(s) => Ok(Value::String(super::csharp::data_type_to_csharp_type(s.as_str()).to_string())),
         _ => Ok(value.clone())
+    }
+}
+
+pub fn render_template(tera: &Tera, template_name: &str, ctx: Context, path: String) {
+    let output = tera.render(template_name, &ctx);
+    match output {
+        Ok(a) => fs::write(
+            path,
+            a,
+        )
+        .expect("file not written"),
+        Err(e) => panic!("Parsing error(s): {}", e),
     }
 }
