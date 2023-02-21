@@ -14,7 +14,7 @@ pub fn generate_sql_view_from_database(
     template_name: &str,
     file_format: &str,
     tera: &Tera,
-) -> Result<(), ()> {
+) -> Result<(), Box<dyn std::error::Error>> {
     println!("Create results directory...");
     create_results_path(results_path);
 
@@ -38,7 +38,7 @@ pub fn generate_sql_view_from_json(
     template_name: &str,
     file_format: &str,
     tera: &Tera,
-) -> Result<(), ()> {
+) -> Result<(), Box<dyn std::error::Error>> {
     println!("Create results directory...");
     create_results_path(results_path);
     let serialized = fs::read_to_string("./data/sql.json").expect("Failed to read sql.json");
