@@ -53,6 +53,7 @@ pub struct BoxLayoutProps {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = "layout_type", content = "contents")]
 pub enum Layout {
     BoxLayout(BoxLayoutProps),
     TableLayout(TableLayoutProps)
