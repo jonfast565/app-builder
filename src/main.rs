@@ -9,6 +9,8 @@ mod utilities;
 
 use core::panic;
 
+use color_eyre::eyre::Result;
+
 use clap::Parser;
 use generators::sql_generator::generate_sql_view_from_json;
 use generators::form_generator::generate_form_from_json;
@@ -27,6 +29,8 @@ fn print_header() {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    color_eyre::install()?;
+
     print_header();
     println!("Initializing templating engine...");
     let tera = get_tera_instance();
